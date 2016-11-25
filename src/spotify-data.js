@@ -119,23 +119,19 @@ router.get('/callback', function(req, res) {
 
         // use the access token to access the Spotify Web API
         request.get(options, function(error, response, body) {
-        	console.log(body)
+        	
 			let firstProm = Fave_artist.findOne({
 				where: {user_ID: body.id}
 			})
 
 			let secondProm = firstProm.then( user => {
-				// console.log(user)
-				// if (user === null) {
-				// 	Fave_artist.
-				// }
 
 		        request.get(optionsTwo, function(errorTwo, responseTwo, bodyTwo) {
 
 		        	// get all the artists listend to by the user
 		        	let artists = []
 		        	let ihatepromises = new Promise (( res, rej ) => {
-			        	for (var i = 2 - 1; i >= 0; i--) {
+			        	for (var i = bodyTwo.items.length - 1; i >= 0; i--) {
 			        		let promOne = new Promise ( ( resolve, reject ) => {
 
 			        		// look into playlist only if not empty
@@ -157,8 +153,9 @@ router.get('/callback', function(req, res) {
 			        						artists.push(bod.items[j].track.artists[k].name)
 			        					}
 			        				}
-			        				setTimeout( () => { 
-			        					res( artists )
+			        				setTimeout( () => {
+			        					console.log(Array.from(new Set(artists)))
+			        					res( Array.from(new Set(artists)) )
 			        				}, 1000)
 			        			})
 			        		})
