@@ -1,9 +1,11 @@
-// import  modules
+// ------------ NECESSARY MODULES AND GLOBAL VARIABLES ------------------
+
 const Sequelize = require ('sequelize')
 const express = require ('express')
 const session = require ('express-session')
 const bodyParser = require('body-parser')
 const request = require('request')
+const Promise = require('promise')
 const querystring = require('querystring')
 // const cookieParser = require('cookie-parser')
 const router = express.Router()
@@ -13,15 +15,9 @@ const app = express()
 let client_id = process.env.SPOT_CLIENT_ID
 let client_secret = process.env.SPOT_CLIENT_SECRET
 let redirect_uri = process.env.SPOT_REDIRECT_URI
+let stateKey = 'spotify_auth_state'
 
-// trial route
-router.get( '/', ( req, res ) => {
-	res.render( 'index' )
-})
-
-router.get( '/search', ( req, res ) => {
-	res.render( 'search' )
-})
+// ------------------------- NECESSARY FUNCTIONS ------------------------
 
 var generateRandomString = function(length) {
 	// function to create a a random string for the state
@@ -34,7 +30,33 @@ var generateRandomString = function(length) {
 	return text
 }
 
-let stateKey = 'spotify_auth_state'
+// ------------------------- CREATE DATABASES USED ----------------------
+
+// connect to database
+let db = new Sequelize( process.env.POSTGRES_SPOTFB, process.env.POSTGRES_USER , process.env.POSTGRES_PASSWORD, {
+	server: 'localhost',
+	dialect: 'postgres'
+})
+
+// Define the models of the database
+let Fave_artist = db.define( 'fave_artist', {
+	user_ID: Sequelize.STRING,
+	name: Sequelize.STRING,
+	email: Sequelize.STRING,
+	listArtists: Sequelize.ARRAY(Sequelize.STRING)
+})
+
+// ------------------------------- ROUTES -------------------------------
+
+// trial route
+router.get( '/', ( req, res ) => {
+	res.render( 'index' )
+})
+
+// after authorization redirect to search
+router.get( '/search', ( req, res ) => {
+	res.render( 'search' )
+})
 
 router.get('/login', function(req, res) {
   var state = generateRandomString(16)
@@ -89,10 +111,73 @@ router.get('/callback', function(req, res) {
           json: true
         }
 
+        var optionsTwo = {
+          url: 'https://api.spotify.com/v1/me/playlists',
+          headers: { 'Authorization': 'Bearer ' + access_token },
+          json: true
+        }
+
         // use the access token to access the Spotify Web API
         request.get(options, function(error, response, body) {
+        	console.log(body)
+			let firstProm = Fave_artist.findOne({
+				where: {user_ID: body.id}
+			})
 
-        })
+			let secondProm = firstProm.then( user => {
+				// console.log(user)
+				// if (user === null) {
+				// 	Fave_artist.
+				// }
+
+		        request.get(optionsTwo, function(errorTwo, responseTwo, bodyTwo) {
+
+		        	// get all the artists listend to by the user
+		        	let artists = []
+		        	let ihatepromises = new Promise (( res, rej ) => {
+			        	for (var i = 2 - 1; i >= 0; i--) {
+			        		let promOne = new Promise ( ( resolve, reject ) => {
+
+			        		// look into playlist only if not empty
+				        		if (bodyTwo.items[i].tracks.total !== 0) {
+					        		var optionsThree = {
+					    				// get the tracks
+					      				url: bodyTwo.items[i].tracks.href,
+					      				headers: { 'Authorization': 'Bearer ' + access_token },
+					      				json: true
+					    			}
+					    			resolve( optionsThree )
+			        			}
+			        		})
+			        		let promTwo = promOne.then( (opt) => {
+			        			request.get(opt, (err, resp, bod) => {
+			        			// loop through every track in the playlist
+			        				for (var j = bod.items.length - 1; j >= 0; j--) {
+			        					for (var k = bod.items[j].track.artists.length - 1; k >= 0; k--) {
+			        						artists.push(bod.items[j].track.artists[k].name)
+			        					}
+			        				}
+			        				setTimeout( () => { 
+			        					res( artists )
+			        				}, 1000)
+			        			})
+			        		})
+			        	}
+			        })
+			        ihatepromises.then( artistArray => {
+			        	// only add default information if the user has never used the app yet/ if not in database yet
+			        	if (user == null) {
+				        	Fave_artist.create({
+				        		user_ID: body.id,
+								name: body.display_name,
+								email: body.email,
+								listArtists: artistArray
+				        	})
+				        }
+			        })
+		        })
+		    })
+	    })
 
         // we can also pass the token to the browser to make requests from there
         res.redirect('/search#' +
@@ -134,5 +219,29 @@ router.get('/callback', function(req, res) {
 //     }
 //   })
 // })
+
+// ------------------------- SYNC DATABASE ------------------------
+
+// db.sync( {force: true} ).then( db => {
+// 	console.log( 'Synced' )
+
+// 	// Create 2 demo users
+// 	Fave_artist.create( {
+// 		user_ID: '11111111',
+// 		name: 'Auguste',
+// 		email: 'auguste@nausedaite.lt',
+// 		listArtists: ['hello', "it's", 'me']
+// 	} )
+// 	Fave_artist.create( {
+// 		user_ID: '22222222',
+// 		name: 'Guga',
+// 		email: 'auguste@nausedaite.lt',
+// 		listArtists: ['Leonard Cohen', "MOTHXR", 'MO']
+// 	} )
+// })
+
+db.sync()
+
+// ------------------------- EXPORT ROUTES ------------------------
 
 module.exports = router
