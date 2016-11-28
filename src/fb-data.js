@@ -21,7 +21,7 @@ let lng = 4.8952
 //------------------------------ ROUTES ---------------------------------
 
 // route that redirects to search results
-router.get("/search", (req, res) => {
+router.get("/searchevent", (req, res) => {
     res.redirect('/events?' + "lat=" + lat + "&lng=" + lng + "&distance=10000&sort=venue&accessToken=" + accToken )
 })
 
