@@ -1,3 +1,4 @@
+/////////////////////////////////////////////////////////////////////////
 // ------------ NECESSARY MODULES AND GLOBAL VARIABLES ------------------
 
 const Sequelize = require ('sequelize')
@@ -17,6 +18,7 @@ let client_secret = process.env.SPOT_CLIENT_SECRET
 let redirect_uri = process.env.SPOT_REDIRECT_URI
 let stateKey = 'spotify_auth_state'
 
+/////////////////////////////////////////////////////////////////////////
 // ------------------------- NECESSARY FUNCTIONS ------------------------
 
 var generateRandomString = function(length) {
@@ -30,6 +32,7 @@ var generateRandomString = function(length) {
 	return text
 }
 
+/////////////////////////////////////////////////////////////////////////
 // ------------------------- CREATE DATABASES USED ----------------------
 
 // connect to database
@@ -46,6 +49,7 @@ let Fave_artist = db.define( 'fave_artist', {
 	listArtists: Sequelize.ARRAY(Sequelize.STRING)
 })
 
+/////////////////////////////////////////////////////////////////////////
 // ------------------------------- ROUTES -------------------------------
 
 // trial route
@@ -217,6 +221,7 @@ router.get('/callback', function(req, res) {
 //   })
 // })
 
+/////////////////////////////////////////////////////////////////////////
 // ------------------------- SYNC DATABASE ------------------------
 
 // db.sync( {force: true} ).then( db => {
@@ -239,6 +244,7 @@ router.get('/callback', function(req, res) {
 
 db.sync()
 
+/////////////////////////////////////////////////////////////////////////
 // ------------------------- EXPORT ROUTES ------------------------
 
 module.exports = router
