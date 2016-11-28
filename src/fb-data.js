@@ -73,7 +73,13 @@ router.get("/events", function(req, res) {
         // Search and handle results
         es.search().then(function (events) {
             // res.send(JSON.strigify(events))
-            res.json(events)
+            // console.log(typeof(events))
+            // console.log(json(events))
+            // console.log( events.events[0] )
+            console.log( events.events.length )
+            // console.log( Object.keys(events) )
+            res.render( 'search' )
+            // res.json(events)
         }).catch(function (error) {
             res.status(500).json(error)
         })
