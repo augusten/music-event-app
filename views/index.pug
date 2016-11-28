@@ -1,7 +1,32 @@
 html
 	head
-		title hello
+		title="Lazyy"
+		<link href="https://fonts.googleapis.com/css?family=Archivo+Narrow:400,400i,700,700i" rel="stylesheet">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		link(href="/css/main.css" type="text/css" rel="stylesheet")
+
 	body
-		h1 Hello
-		div(id="login")
-			a(href="/login" class="btn btn-primary") Log in with Spotify
+		div(class="row")
+			div(id="leftNav" class="myLeftNav")
+				a(href="javascript:void(0)" class="closebtn" onclick="closeNav()") Ici
+					p blablabla test
+
+			div(id="main" class=".col-xs-12 .col-sm-12 .col-md-12")
+			
+				span(onclick="openNav()" class="navnav") M<br>O<br>R<br>E 
+
+
+					h1(class="title")
+						p(id="test") Yo lazyy
+					p 
+					
+			
+
+			div(class="col-md-12")
+
+				p(class="intro") Lazyy helps you to find events close by where you are, based on what you are listening to on Spotify! It makes your evening way easier to plan !
+			div
+				p log in with spotify
+
+		script(src="/js/main.js")
+
