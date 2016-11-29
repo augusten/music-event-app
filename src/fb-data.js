@@ -20,6 +20,7 @@ const EventSearch = require("facebook-events-by-location-core")
 // Environment variables used
 let accToken = process.env.FEBL_ACCESS_TOKEN
 let connectionString = 'postgres://' + process.env.POSTGRES_USER + ':' + process.env.POSTGRES_PASSWORD + '@localhost/' + process.env.POSTGRES_SPOTFB
+let eventList = []
 
 /////////////////////////////////////////////////////////////////////////
 // ------------------------- CREATE DATABASES USED ----------------------
@@ -72,7 +73,6 @@ router.get("/searchevent", (req, res) => {
 // Main route for search
 router.get("/events", function(req, res) {
     let usr = req.session.user.user_id
-    let eventList = []
 
     if (!req.query.lat || !req.query.lng) {
         res.status(500).json({message: "Specify the lat and lng parameters"})
@@ -118,19 +118,7 @@ router.get("/events", function(req, res) {
 
         // Search and handle results
         es.search().then(function (events) {
-            // find user 
-
-
-            // pg.connect( connectionString, (err, client, done ) => {
-            //     if ( err ) throw err
-            //     let queryText = "select * from users"
-            //     client.query( queryText, ( err, result ) => {
-            //         if ( err ) throw err
-            //         done()
-            //         pg.end()
-            //         console.log( result.rows )
-            //     })
-            // })
+            // find user to find events based on their listening tastes
             User.findOne({
                 where: {user_id: req.session.user.user_id}
             })
@@ -141,7 +129,7 @@ router.get("/events", function(req, res) {
                         if ( events.events[i].name.toLowerCase().indexOf( usr.list_artists[j].toLowerCase() + ' ') !== -1 ) {
 
                             // console.log( usr.list_artists[j] )
-                            eventList.push(events.events[i].name)
+                            eventList.push(events.events[i])
                             Fb_event.findOne({
                                 where: {event_url:'https://www.facebook.com/events/' + events.events[i].id}
                             }).then ( ev => {
@@ -167,7 +155,7 @@ router.get("/events", function(req, res) {
                 }
             })
             .then( () => {
-                res.send( 'results' )
+                res.redirect( '/darezult' )
             })
         }).catch(function (error) {
             res.status(500).json(error)
@@ -175,6 +163,12 @@ router.get("/events", function(req, res) {
         
     }
 
+})
+
+router.get( '/darezult', ( req, res ) => {
+    // console.log( Object.keys(req) )
+    console.log( eventList )
+    res.send( 'success ')
 })
 
 /////////////////////////////////////////////////////////////////////////
