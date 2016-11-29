@@ -65,13 +65,8 @@ router.get( '/', ( req, res ) => {
 
 // after authorization redirect to search
 router.get( '/search', ( req, res ) => {
-	// console.log(req._readableState)
 	let usr = req.session.user
-	// console.log( req.session.user )
-	// console.log(req.readable)
-	// console.log(req.sessionID)
-	// console.log(Object.keys(req))
-	res.redirect( '/results')
+	res.redirect( '/searchevent')
 	// res.render( 'search', {user: usr} )
 })
 
@@ -135,7 +130,6 @@ router.get('/callback', function(req, res) {
         }
         // use the access token to access the Spotify Web API
         request.get(options, function(error, response, body) {
-        	
 			let firstProm = User.findOne({
 				where: {user_id: body.id}
 			})
@@ -191,7 +185,6 @@ router.get('/callback', function(req, res) {
 			        	User.findOne({
 			        		where: {user_id: body.id}
 			        	}).then( usr => {
-			        		// console.log( usr )
 			        		req.session.user = usr
 			        		res.redirect('/search?' +
           						querystring.stringify({
@@ -205,13 +198,6 @@ router.get('/callback', function(req, res) {
 		        })
 		    })
 	    })
-
-        // we can also pass the token to the browser to make requests from there
-        // res.redirect('/search?' +
-        //   querystring.stringify({
-        //     access_token: access_token,
-        //     refresh_token: refresh_token
-        //   }))
       } else {
         res.redirect('/search?' +
           querystring.stringify({

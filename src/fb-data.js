@@ -32,12 +32,13 @@ let db = new Sequelize( process.env.POSTGRES_SPOTFB, process.env.POSTGRES_USER ,
 
 // Define the models of the database
 let Fb_event = db.define( 'fb_event', {
-    event_id: Sequelize.STRING,
+    event_url: Sequelize.STRING,
     e_name: Sequelize.STRING,
     city: Sequelize.STRING,
     venue: Sequelize.STRING,
     latitude: Sequelize.STRING,
     longitude: Sequelize.STRING,
+    coverphoto: Sequelize.STRING
 })
 
 let User = db.define( 'user', {
@@ -47,9 +48,13 @@ let User = db.define( 'user', {
     list_artists: Sequelize.ARRAY(Sequelize.STRING)
 })
 
+let UserProject = db.define('user_project', {
+  role: Sequelize.STRING
+});
+
 // Define database relations
 User.hasMany( Fb_event )
-Fb_event.belongsTo( User )
+Fb_event.belongsToMany( User, { through: UserProject } )
 
 // variables of Amsterdam coordinates for development stage until we add the possibility to choose the city, and thus, the longitude and latitude
 // let lat 
@@ -60,11 +65,14 @@ Fb_event.belongsTo( User )
 
 // route that redirects to search results
 router.get("/searchevent", (req, res) => {
+    let user = req.session.user
     res.redirect('/events?' + "lat=" + req.query.latitude + "&lng=" + req.query.longitude + "&distance=10000&sort=venue&accessToken=" + accToken )
 })
 
 // Main route for search
 router.get("/events", function(req, res) {
+    let usr = req.session.user.user_id
+    let eventList = []
 
     if (!req.query.lat || !req.query.lng) {
         res.status(500).json({message: "Specify the lat and lng parameters"})
@@ -111,44 +119,62 @@ router.get("/events", function(req, res) {
         // Search and handle results
         es.search().then(function (events) {
             // find user 
-            pg.connect( connectionString, (err, client, done ) => {
-                if ( err ) throw err
-                let queryText = "select * from users"
-                client.query( queryText, ( err, result ) => {
-                    if ( err ) throw err
-                    done()
-                    pg.end()
-                    console.log( result.rows )
-                })
+
+
+            // pg.connect( connectionString, (err, client, done ) => {
+            //     if ( err ) throw err
+            //     let queryText = "select * from users"
+            //     client.query( queryText, ( err, result ) => {
+            //         if ( err ) throw err
+            //         done()
+            //         pg.end()
+            //         console.log( result.rows )
+            //     })
+            // })
+            User.findOne({
+                where: {user_id: req.session.user.user_id}
             })
-            // res.send(JSON.strigify(events))
-            // console.log(typeof(events))
-            // console.log(json(events))
-            // console.log( events.events[0] )
-            // console.log( events.events.length )
-            // for (var i = events.events.length - 1; i >= 0; i--) {
-            //     for (var i = Things.length - 1; i >= 0; i--) {
-            //         Things[i]
-            //     }
-            // }
-            console.log(req.body)
-            // console.log( Object.keys(events) )
-            // res.render( 'search' )
-            res.redirect( 'results' )
-            // res.json(events)
-            // res.send( 'OK' )
-            // res.location('http://google.com')
+            .then ( usr => {
+                for (var i = events.events.length - 1; i >= 0; i--) {
+                    for (var j = usr.list_artists.length - 1; j >= 0; j--) {
+                        // console.log( events.events[i].name.toLowerCase() )
+                        if ( events.events[i].name.toLowerCase().indexOf( usr.list_artists[j].toLowerCase() + ' ') !== -1 ) {
+
+                            // console.log( usr.list_artists[j] )
+                            eventList.push(events.events[i].name)
+                            Fb_event.findOne({
+                                where: {event_url:'https://www.facebook.com/events/' + events.events[i].id}
+                            }).then ( ev => {
+                                if ( ev === null ) {
+                                    Fb_event.create( {
+                                        event_url: 'https://www.facebook.com/events/' + events.events[i].id,
+                                        e_name: events.events[i].name,
+                                        city: events.events[i].venue.location.city,
+                                        venue: events.events[i].venue.name,
+                                        latitude: events.events[i].venue.location.latitude,
+                                        longitude: events.events[i].venue.location.longitude,
+                                        coverphoto: events.events[i].coverPicture
+                                    })
+                                    .then( evn => {
+                                        evn.addUser( usr )
+                                    })                              
+                                } else {
+                                    ev.addUser ( usr )
+                                }
+                            })
+                        }
+                    }
+                }
+            })
+            .then( () => {
+                res.send( 'results' )
+            })
         }).catch(function (error) {
             res.status(500).json(error)
         })
         
     }
 
-})
-
-router.get('/results', ( req, res ) => {
-    console.log( req.session.user )
-    res.send( 'pong' )
 })
 
 /////////////////////////////////////////////////////////////////////////
@@ -159,7 +185,7 @@ router.get('/results', ( req, res ) => {
 
 //  // Create 1 demo event
 //     Fb_event.create( {
-//         event_ID: '1667110543580518',
+//         event_url: 'https://www.facebook.com/events/' + '1667110543580518',
 //         e_name: 'LIVE: Psichodelinis Šuo + Lukas Norkūnas',
 //         city: 'Vilnius',
 //         venue: 'Liverpool Indie/Rock Bar',
