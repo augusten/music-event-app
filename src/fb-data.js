@@ -14,6 +14,20 @@ const session = require ('express-session')
 const app = express()
 const router = express.Router()
 
+// For logged in user use session
+app.use(
+    express.static( __dirname + '/../static' ),
+    session ({
+        secret: 'this is some secret',
+        resave: true,
+        saveUninitialized: false,
+        cookie: {
+            secure: false,
+            maxage: 36000
+        }
+    })
+)
+
 // Using the facebook events by location module based on the example in https://github.com/tobilg/facebook-events-by-location/blob/master/README.md
 const EventSearch = require("facebook-events-by-location-core")
 

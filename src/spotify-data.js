@@ -10,7 +10,6 @@ const bodyParser = require('body-parser')
 const request = require('request')
 const Promise = require('promise')
 const querystring = require('querystring')
-// const cookieParser = require('cookie-parser')
 const router = express.Router()
 const app = express()
 
@@ -59,8 +58,11 @@ let User = db.define( 'user', {
 
 // trial route
 router.get( '/', ( req, res ) => {
+	// console.log( req.session.user )
 	let usr = req.session.user
-	res.render( 'index' )
+	res.render( 'index' , {
+		user: req.session.user
+	})
 })
 
 // after authorization redirect to search
@@ -86,7 +88,7 @@ router.get('/login', function(req, res) {
 })
 
 router.get('/callback', function(req, res) {
-
+	
 	// request refresh and access tokens
 	// after checking the state parameter
 	var code = req.query.code || null
@@ -98,6 +100,7 @@ router.get('/callback', function(req, res) {
 			error: 'state_mismatch'
 		}))
 	} else {
+	
 	var authOptions = {
 		url: 'https://accounts.spotify.com/api/token',
 	  	form: {
@@ -145,6 +148,7 @@ router.get('/callback', function(req, res) {
 
 			        		// look into playlist only if not empty
 				        		if (bodyTwo.items[i].tracks.total !== 0) {
+
 					        		var optionsThree = {
 					    				// get the tracks
 					      				url: bodyTwo.items[i].tracks.href,
@@ -160,6 +164,7 @@ router.get('/callback', function(req, res) {
 			        				// loop through every track in the playlist
 			        				for (var j = bod.items.length - 1; j >= 0; j--) {
 			        					for (var k = bod.items[j].track.artists.length - 1; k >= 0; k--) {
+			        						// console.log(bod.items[j].track.artists)
 			        						artists.push(bod.items[j].track.artists[k].name)
 			        					}
 			        				}
@@ -213,6 +218,13 @@ router.get('/callback', function(req, res) {
     })
   }
 })
+
+router.get( '/out', ( req, res ) => {
+	AuthenticationClient.clearCookies(getApplication());
+	res.send( 'logged out? ')
+})
+
+
 
 /////////////////////////////////////////////////////////////////////////
 // ------------------------- SYNC DATABASE ------------------------
