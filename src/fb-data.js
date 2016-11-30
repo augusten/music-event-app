@@ -1,3 +1,5 @@
+'use strict'
+
 /////////////////////////////////////////////////////////////////////////
 //------------------------ MODULES AND VARIABLES ------------------------
 
@@ -14,15 +16,15 @@ const EventSearch = require("facebook-events-by-location-core")
 let accToken = process.env.FEBL_ACCESS_TOKEN
 
 // variables of Amsterdam coordinates for development stage until we add the possibility to choose the city, and thus, the longitude and latitude
-let lat = 52.379189
-let lng = 4.8952
+// let lat 
+// let lng  
 
 /////////////////////////////////////////////////////////////////////////
 //------------------------------ ROUTES ---------------------------------
 
 // route that redirects to search results
 router.get("/searchevent", (req, res) => {
-    res.redirect('/events?' + "lat=" + lat + "&lng=" + lng + "&distance=10000&sort=venue&accessToken=" + accToken )
+    res.redirect('/events?' + "lat=" + req.query.latitude + "&lng=" + req.query.longitude + "&distance=10000&sort=venue&accessToken=" + accToken )
 })
 
 // Main route for search
@@ -76,10 +78,10 @@ router.get("/events", function(req, res) {
             // console.log(typeof(events))
             // console.log(json(events))
             // console.log( events.events[0] )
-            console.log( events.events.length )
+            res.send( events.events)
             // console.log( Object.keys(events) )
             // res.render( 'search' )
-            res.json(events)
+            // res.json(events)
         }).catch(function (error) {
             res.status(500).json(error)
         })

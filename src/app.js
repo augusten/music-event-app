@@ -1,3 +1,5 @@
+'use strict'
+
 // import  modules
 const Sequelize = require ('sequelize')
 const express = require ('express')
@@ -5,6 +7,7 @@ const session = require ('express-session')
 const bodyParser = require('body-parser')
 const fbData = require( __dirname + '/fb-data')
 let spotifyData = require( __dirname + '/spotify-data' )
+let geocoding = require(__dirname + '/geocoding')
 
 const app = express()
 
@@ -25,12 +28,14 @@ app.set('view engine', 'pug')
 
 /////////////////////////////////////////////////////////////////////////
 //-------------------------- LOAD PUG FILES -----------------------------
-app.use(express.static('static'))
+
+app.use(express.static(__dirname + '/../static'))
 
 /////////////////////////////////////////////////////////////////////////
 //----------------------------- USE ROUTES ------------------------------
 app.use('/', spotifyData)
 app.use('/', fbData)
+app.use('/', geocoding)
 
 /////////////////////////////////////////////////////////////////////////
 //---------------------------- START SERVER -----------------------------
