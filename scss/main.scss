@@ -5,8 +5,8 @@
 body { 
   font-family: $fontstyle;
   margin: 0; 
-  background: black;
   color: white;
+  height: calc(150vh)
 }
 
 
@@ -82,9 +82,15 @@ ul {
 #main {
     transition: margin-left .5s;
     margin-left: 15px;
+    height: 580px;
     padding: 16px;
+    background-color:black;
 }
 
+#main2{
+  background-color: white;
+  color: black;
+}
 @media screen and (max-height: 450px) {
   .myLeftNav {padding-top: 15px;}
   .myLeftNav a {font-size: 18px;}
@@ -131,6 +137,13 @@ ul {
 
 #js-rotating{
   color: yellow;
+}
+
+#link{
+      text-decoration: none;
+    color: black;
+    font-size: 30px;
+    text-align: center;
 }
 
 /*

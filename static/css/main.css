@@ -2,8 +2,8 @@
 body {
   font-family: "Archivo Narrow", sans-serif;
   margin: 0;
-  background: black;
-  color: white; }
+  color: white;
+  height: calc(150vh); }
 
 /* ---------- NAV ----------- */
 @media (min-width: 800px) {
@@ -65,7 +65,13 @@ body {
 #main {
   transition: margin-left .5s;
   margin-left: 15px;
-  padding: 16px; }
+  height: 580px;
+  padding: 16px;
+  background-color: black; }
+
+#main2 {
+  background-color: white;
+  color: black; }
 
 @media screen and (max-height: 450px) {
   .myLeftNav {
@@ -105,6 +111,12 @@ body {
 
 #js-rotating {
   color: yellow; }
+
+#link {
+  text-decoration: none;
+  color: black;
+  font-size: 30px;
+  text-align: center; }
 
 /*
 #test{

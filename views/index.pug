@@ -15,20 +15,27 @@ html
 			div(id="main" class="col-md-12")
 				div(class="col-md-1")
 					p(onclick="openNav()" class="navnav" ) 
-						span(class="glyphicon glyphicon-arrow-left")
+						span ⌂
 
 				div(class="col-md-10")
 					div(class="firstPart")
 						h1(class="title") Get lazyy
 						p(class="smalltxt") A web app for <span id="js-rotating">Lazy, Passionate, Musical, Party </span> people.
 
+				div(class="col-md-1")
 
-					div(class="secondPart" class="anchor-scroll" data-class-to="body" data-on-scroll="blur-effect")
+			div(id="main2" class="col-md-12")
+				div(class="col-md-1")
+				div(class="col-md-10")
+					div(id="click")
+						a(href="#" id="link") ↓
+
+					div(class="secondPart" id="anchorS" class="anchor-scroll" data-class-to="body" data-on-scroll="blur-effect")
+						a(name="aki")
 						p(class="intro") Lazyy helps you to find events close by where you are, based on what you are listening to on Spotify! It makes your evening way easier to plan !
 
 						div(id="login")
 							a(href="/login" ) log in with spotify
-
 				div(class="col-md-1")
 
 				
