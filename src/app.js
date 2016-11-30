@@ -15,21 +15,20 @@ const app = express()
 app.set('views', './views')
 app.set('view engine', 'pug')
 
-// For logged in user start session
-// app.use(
-// 	express.static( 'static' ),
-// 	session ({
-// 		secret: 'this is some secret',
-// 		resave: true,
-// 		saveUninitialized: false
-// 	})
-// )
-
-
 /////////////////////////////////////////////////////////////////////////
 //-------------------------- LOAD PUG FILES -----------------------------
 
-app.use(express.static(__dirname + '/../static'))
+// For logged in user start session
+app.use(
+	express.static( __dirname + '/../static' ),
+	session ({
+		secret: 'this is some secret',
+		resave: true,
+		saveUninitialized: false
+	})
+)
+
+// app.use(express.static(__dirname + '/static'))
 
 /////////////////////////////////////////////////////////////////////////
 //----------------------------- USE ROUTES ------------------------------

@@ -19,6 +19,7 @@ let client_id = process.env.SPOT_CLIENT_ID
 let client_secret = process.env.SPOT_CLIENT_SECRET
 let redirect_uri = process.env.SPOT_REDIRECT_URI
 let stateKey = 'spotify_auth_state'
+// let usr = null
 
 /////////////////////////////////////////////////////////////////////////
 // ------------------------- NECESSARY FUNCTIONS ------------------------
@@ -44,11 +45,13 @@ let db = new Sequelize( process.env.POSTGRES_SPOTFB, process.env.POSTGRES_USER ,
 })
 
 // Define the models of the database
-let Fave_artist = db.define( 'fave_artist', {
-	user_ID: Sequelize.STRING,
+// let User = db.define
+
+let User = db.define( 'user', {
+	user_id: Sequelize.STRING,
 	name: Sequelize.STRING,
 	email: Sequelize.STRING,
-	listArtists: Sequelize.ARRAY(Sequelize.STRING)
+	list_artists: Sequelize.ARRAY(Sequelize.STRING)
 })
 
 /////////////////////////////////////////////////////////////////////////
@@ -56,54 +59,62 @@ let Fave_artist = db.define( 'fave_artist', {
 
 // trial route
 router.get( '/', ( req, res ) => {
+	let usr = req.session.user
 	res.render( 'index' )
 })
 
 // after authorization redirect to search
 router.get( '/search', ( req, res ) => {
-	res.render( 'search' )
+	// console.log(req._readableState)
+	let usr = req.session.user
+	// console.log( req.session.user )
+	// console.log(req.readable)
+	// console.log(req.sessionID)
+	// console.log(Object.keys(req))
+	res.redirect( '/results')
+	// res.render( 'search', {user: usr} )
 })
 
 router.get('/login', function(req, res) {
-  var state = generateRandomString(16)
-  // request authorization
-  var scope = 'user-read-private user-read-email playlist-read-private';
-  res.redirect('https://accounts.spotify.com/authorize?' +
-    querystring.stringify({
-      response_type: 'code',
-      client_id: client_id,
-      scope: scope,
-      redirect_uri: redirect_uri,
-      state: state
-    }))
-})
+
+	var state = generateRandomString(16)
+	// request authorization
+	var scope = 'user-read-private user-read-email playlist-read-private';
+	res.redirect('https://accounts.spotify.com/authorize?' +
+	querystring.stringify({
+		response_type: 'code',
+		client_id: client_id,
+		scope: scope,
+		redirect_uri: redirect_uri,
+		state: state
+	}))
+	})
 
 router.get('/callback', function(req, res) {
 
-  // request refresh and access tokens
-  // after checking the state parameter
+	// request refresh and access tokens
+	// after checking the state parameter
+	var code = req.query.code || null
+	var state = req.query.state || null
 
-  var code = req.query.code || null
-  var state = req.query.state || null
-
-  if (state === null ){
-    res.redirect('/#' +
-      querystring.stringify({
-        error: 'state_mismatch'
-      }));
-  } else {
-    var authOptions = {
-      url: 'https://accounts.spotify.com/api/token',
-      form: {
-        code: code,
-        redirect_uri: redirect_uri,
-        grant_type: 'authorization_code'
-      },
-      headers: {
-        'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64'))
-      },
-      json: true
-    };
+	if (state === null ){
+	res.redirect('/#' +
+		querystring.stringify({
+			error: 'state_mismatch'
+		}))
+	} else {
+	var authOptions = {
+		url: 'https://accounts.spotify.com/api/token',
+	  	form: {
+	    	code: code,
+	    	redirect_uri: redirect_uri,
+	    	grant_type: 'authorization_code'
+	  	},
+	  	headers: {
+	    	'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64'))
+	  	},
+	  	json: true
+	}
 
     request.post(authOptions, function(error, response, body) {
       if (!error && response.statusCode === 200) {
@@ -122,16 +133,14 @@ router.get('/callback', function(req, res) {
           headers: { 'Authorization': 'Bearer ' + access_token },
           json: true
         }
-
         // use the access token to access the Spotify Web API
         request.get(options, function(error, response, body) {
         	
-			let firstProm = Fave_artist.findOne({
-				where: {user_ID: body.id}
+			let firstProm = User.findOne({
+				where: {user_id: body.id}
 			})
 
 			let secondProm = firstProm.then( user => {
-
 		        request.get(optionsTwo, function(errorTwo, responseTwo, bodyTwo) {
 
 		        	// get all the artists listend to by the user
@@ -160,7 +169,7 @@ router.get('/callback', function(req, res) {
 			        					}
 			        				}
 			        				setTimeout( () => {
-			        					console.log(Array.from(new Set(artists)))
+			        					// only have unqique artist names in the array
 			        					res( Array.from(new Set(artists)) )
 			        				}, 1000)
 			        			})
@@ -170,26 +179,41 @@ router.get('/callback', function(req, res) {
 			        ihatepromises.then( artistArray => {
 			        	// only add default information if the user has never used the app yet/ if not in database yet
 			        	if (user == null) {
-				        	Fave_artist.create({
-				        		user_ID: body.id,
+				        	User.create({
+				        		user_id: body.id,
 								name: body.display_name,
 								email: body.email,
-								listArtists: artistArray
+								list_artists: artistArray
 				        	})
 				        }
+			        })
+			        .then( () => {
+			        	User.findOne({
+			        		where: {user_id: body.id}
+			        	}).then( usr => {
+			        		// console.log( usr )
+			        		req.session.user = usr
+			        		res.redirect('/search?' +
+          						querystring.stringify({
+            						access_token: access_token,
+            						refresh_token: refresh_token
+          						})
+          					)
+			        	})
+
 			        })
 		        })
 		    })
 	    })
 
         // we can also pass the token to the browser to make requests from there
-        res.redirect('/search#' +
-          querystring.stringify({
-            access_token: access_token,
-            refresh_token: refresh_token
-          }))
+        // res.redirect('/search?' +
+        //   querystring.stringify({
+        //     access_token: access_token,
+        //     refresh_token: refresh_token
+        //   }))
       } else {
-        res.redirect('/search#' +
+        res.redirect('/search?' +
           querystring.stringify({
             error: 'invalid_token'
           }))
@@ -198,31 +222,6 @@ router.get('/callback', function(req, res) {
   }
 })
 
-// router.get('/refresh_token', function(req, res) {
-
-//   // requesting access token from refresh token
-//   var refresh_token = req.query.refresh_token;
-//   var authOptions = {
-//     url: 'https://accounts.spotify.com/api/token',
-//     headers: { 'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64')) },
-//     form: {
-//       grant_type: 'refresh_token',
-//       refresh_token: refresh_token
-//     },
-//     json: true
-
-//   };
-
-//   request.post(authOptions, function(error, response, body) {
-//     if (!error && response.statusCode === 200) {
-//       var access_token = body.access_token
-//       res.send({
-//         'access_token': access_token
-//       })
-//     }
-//   })
-// })
-
 /////////////////////////////////////////////////////////////////////////
 // ------------------------- SYNC DATABASE ------------------------
 
@@ -230,17 +229,17 @@ router.get('/callback', function(req, res) {
 // 	console.log( 'Synced' )
 
 // 	// Create 2 demo users
-// 	Fave_artist.create( {
-// 		user_ID: '11111111',
+// 	User.create( {
+// 		user_id: '11111111',
 // 		name: 'Auguste',
 // 		email: 'auguste@nausedaite.lt',
-// 		listArtists: ['hello', "it's", 'me']
+// 		list_artists: ['hello', "it's", 'me']
 // 	} )
-// 	Fave_artist.create( {
-// 		user_ID: '22222222',
+// 	User.create( {
+// 		user_id: '22222222',
 // 		name: 'Guga',
 // 		email: 'auguste@nausedaite.lt',
-// 		listArtists: ['Leonard Cohen', "MOTHXR", 'MO']
+// 		list_artists: ['Leonard Cohen', "MOTHXR", 'MO']
 // 	} )
 // })
 
