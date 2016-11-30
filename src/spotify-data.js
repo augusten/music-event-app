@@ -156,7 +156,8 @@ router.get('/callback', function(req, res) {
 			        		})
 			        		let promTwo = promOne.then( (opt) => {
 			        			request.get(opt, (err, resp, bod) => {
-			        			// loop through every track in the playlist
+
+			        				// loop through every track in the playlist
 			        				for (var j = bod.items.length - 1; j >= 0; j--) {
 			        					for (var k = bod.items[j].track.artists.length - 1; k >= 0; k--) {
 			        						artists.push(bod.items[j].track.artists[k].name)

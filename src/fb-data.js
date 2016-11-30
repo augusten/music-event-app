@@ -167,7 +167,7 @@ router.get("/events", function(req, res) {
 
 router.get( '/darezult', ( req, res ) => {
     // console.log( Object.keys(req) )
-    console.log( eventList )
+    // console.log( eventList )
     res.send( 'success ')
 })
 
