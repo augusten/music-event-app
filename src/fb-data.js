@@ -78,8 +78,8 @@ router.get("/events", function(req, res) {
             // console.log( events.events[0] )
             console.log( events.events.length )
             // console.log( Object.keys(events) )
-            res.render( 'search' )
-            // res.json(events)
+            // res.render( 'search' )
+            res.json(events)
         }).catch(function (error) {
             res.status(500).json(error)
         })
