@@ -18,27 +18,42 @@
 
 
 $(document).ready(function() {
-	$("#js-rotating").Morphext({
-    // The [in] animation type. Refer to Animate.css for a list of available animations.
-   	animation: "bounceIn",
-    // An array of phrases to rotate are created based on this separator. Change it if you wish to separate the phrases differently (e.g. So Simple | Very Doge | Much Wow | Such Cool).
-    separator: ",",
-    // The delay between the changing of each phrase in milliseconds.
-    speed: 1500,
-    complete: function () {
-        // Called after the entrance animation is executed.
-    }
-});
+	console.log("dom ready")
+	$(window).scroll(function(){
+		console.log("someone scrolled")
+	})
 
-	$('.anchor-scroll').anchorScroll({
-    scrollSpeed: 800, // scroll speed
-    offsetTop: 0, // offset for fixed top bars (defaults to 0)
-    onScroll: function () { 
-      // callback on scroll start
-    },
-    scrollEnd: function () { 
-      // callback on scroll end
-    }
- });
+
+	$("#js-rotating").Morphext({
+	    // The [in] animation type. Refer to Animate.css for a list of available animations.
+	   	animation: "bounceIn",
+	    // An array of phrases to rotate are created based on this separator. Change it if you wish to separate the phrases differently (e.g. So Simple | Very Doge | Much Wow | Such Cool).
+	    separator: ",",
+	    // The delay between the changing of each phrase in milliseconds.
+	    speed: 1500,
+	    complete: function () {
+	        // Called after the entrance animation is executed.
+	    }
+	});
+ 	
+	function scrollTo(aid){
+		var taag = $("a[name='"+ aid +"']");
+		$("html, body").animate({scrollTop: taag.offset().top}, 'slow')
+	}
+
+	$('#link').click(function(){
+		scrollTo('aki')
+	})
+
+	// $('.anchor-scroll').anchorScroll({
+	//     scrollSpeed: 800, // scroll speed
+	//     offsetTop: 0, // offset for fixed top bars (defaults to 0)
+	//     onScroll: function () { 
+	//       // callback on scroll start
+	//     },
+	//     scrollEnd: function () { 
+	//       // callback on scroll end
+	//     }
+	//  });
 
 })
