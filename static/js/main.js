@@ -1,5 +1,9 @@
-
+// Helper functions
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 	
+// SLIDES NAV	
 	function before(){
 		document.getElementById("main").style.marginLeft = "30px";
 		document.getElementById("leftNav").style.width = "30px";
@@ -16,7 +20,7 @@
 		document.getElementById("main").style.marginLeft = "30px";
 	}
 
-
+/////////////////JQUERY STARTS HERE //////////////////
 
 $(document).ready(function() {
 	console.log("dom ready")
@@ -24,7 +28,7 @@ $(document).ready(function() {
 		console.log("someone scrolled")
 	})
 
-
+	////////---Text effect rotating
 	$("#js-rotating").Morphext({
 	    // The [in] animation type. Refer to Animate.css for a list of available animations.
 	   	animation: "bounceIn",
@@ -37,73 +41,63 @@ $(document).ready(function() {
 	    }
 	});
  	
-	function scrollTo(aid){
-		var taag = $("a[name='"+ aid +"']");
-		$("html, body").animate({scrollTop: taag.offset().top}, 1000)
+////////---Scroll functions
+	
+$(document).on('click', 'a', function(event){
+    event.preventDefault();
+
+    $('html, body').animate({
+        scrollTop: $( $.attr(this, 'href') ).offset().top
+    }, 1000);
+});
+
+
+//////////----Button jumps
+	$('#btnSpot').hover(function() {
+		$("#btnSpot").addClass('animated shake').one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', 
+			function() {
+			$('#btnSpot').removeClass('animated shake');
+		});
+});
+
+//////////----Functions for random timeout images distortion
+
+	function addRandomElement(thesource){
+		return thesource[ getRandomInt(0, thesource.length - 1) ]
 	}
 
-	$('#link').click(function(){
-		scrollTo('aki')
-	})
-
-
-
-
-// function doSomething() {
-// 	 $("#sv2").addClass('animated jello');
-// 	 console.log('jump works')
-// }
-
-// function init() {
-//     var try = function() {
-//         doSomething();
-//         var randomtime = Math.random() * 1000;
-//         setTimeout(try, randomtime);
-//     }
-//     myFunction();
-// }
-
-// $(function() {
-//     init();
-// });
-
-// function doIt() {
-// // do stuff, happens to use jQuery here (nothing else does)
-// $(“#sv2”).addClass(“animated jello”);
-
-// clearInterval(timer);
-// timer = setInterval(toggleSomething, (Math.random() * 1000) );
-// }
-
-// // The random range will be from 0 to 3000, or whatever you want !
-// var timer = setInterval(doIt, 1000);
-// // 1000 = Initial timer when the page is first loaded
-
-
-// function jumping() {
-//        // do stuff with jquery
-// }
-
-// var randomtime = Math.random() * 1000;
-// setInterval(jumping, randomtime);
-
-
-
-// 1000 = Initial timer when the page is first loaded
-
 	var randomm = function() {
+		// Array with the elements
 		var arr = $('.sv')
-		var item = arr[Math.floor(Math.random()*arr.length)];
-        $(item).animate('animated jello');
-            return false;
-    };
+		console.log(arr)
+		// How many to grab
+		var elemnr = arr.length / 2
+		// Empty array to hold the random elements
+		var targets = []
+		// Add random elements
+		for (var i = 0; i < elemnr; i++) {
+			targets.push( addRandomElement( arr ) )
+		}
+		console.log(targets)
+		// animate elem from targets
+		// select each elem from my array target
+		$(targets).each(function(i, val) {
+			console.log(val)
+			if (Math.round(Math.random())) {
+				$(val).addClass('jello')
+			} else {
+				$(val).removeClass('jello')
+			}
+		});		
+	}
+        
   	var randomTime = function() {
 		return Math.random() * 1000
 	}
 
 	setInterval(function(){
 		setTimeout(randomm, randomTime() )
-	}, 500);
+	}, 1000);
 	
 })
 

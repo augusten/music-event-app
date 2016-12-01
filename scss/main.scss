@@ -82,7 +82,7 @@ ul {
 #main {
     transition: margin-left .5s;
     margin-left: 15px;
-    height: 540px;
+    height: 580px;
     padding: 16px;
     background-color:#f2f2f2;
 }
@@ -112,7 +112,7 @@ ul {
     font-size: $fonttitle;
     text-align: center;
     color: black;
-    margin-top: 20px;
+    margin-top: 60px;
     position: relative;
     z-index: 2;
   }
@@ -125,7 +125,7 @@ ul {
 .intro{
 	    font-size: 80px;
     text-align: center;
-    margin-top: 150px;
+    margin-top: 100px;
 }
 
 .firstPart{
@@ -136,6 +136,11 @@ ul {
 }
 .thirdPart{
   height: 600px;
+  margin-top: 50px;
+  background-color:#f2f2f2;
+}
+.betweenScroll{
+  height: 10px;
 }
 .smalltxt{
   font-size: 70px;
@@ -149,9 +154,15 @@ ul {
 }
 
 #link{
-      text-decoration: none;
+    text-decoration: none;
     color: black;
-    font-size: 30px;
+    font-size: 50px;
+    text-align: center;
+}
+#link2{
+    text-decoration: none;
+    color: black;
+    font-size: 50px;
     text-align: center;
 }
 #click{
@@ -173,7 +184,7 @@ shape .shape_1 {
 .come{
   font-size: 80px;
   color: black;
-  margin-top: 300px;
+  margin-top: 80px;
 }
 .btn-lg{
   padding: 20px 16px;
@@ -182,15 +193,21 @@ shape .shape_1 {
     border-radius: 46px;
     border-color: deeppink;
     border: 4;
-    position: absolute;
-    /* top: 120px; */
+    position: relative;
+    top: 35px;
     height: 80px;
-    margin-left: 420px;
-    margin-top: 50px;
     width: 180px;
+    left: 10px;
+
+
 &:hover{
     border-color: DeepPink;
   }
+}
+
+#center-button{
+  margin:0 auto;
+  width: 200px;
 }
 
 #lolog{
@@ -203,7 +220,8 @@ shape .shape_1 {
 
 #main3{
   margin: 0;
-    height: 200px;
+    height: 730px;
+    margin-top:-30px; 
     background: #f2f2f2;
 }
 
@@ -217,23 +235,20 @@ shape .shape_1 {
 #sv1{
     position: absolute;
     -webkit-animation-duration: 20s;
--webkit-animation-iteration-count: infinite;
-
-
 }
 
 #sv2{
   margin-left: 700px;
   top: 20px;
+      -webkit-animation-duration: 6s;
+  -webkit-animation-delay: 12s;
 }
+
 #sv3{
 position: absolute;
     top: 310px;
     left: 250px;
     -webkit-animation-duration: 15s;
-    -webkit-animation-iteration-count: infinite;
- 
-
 }
 
 #sv4{
@@ -241,37 +256,67 @@ position: absolute;
     left: -90px;
     top: 0px;
     z-index: 1;
+    -webkit-animation-duration: 6s;
+
 }
 #sv5{
   position: absolute;
     left: 470px;
     top: -40px;
     z-index: 1;
-       -webkit-animation-duration: 6s;
-      -webkit-animation-iteration-count: infinite;
+    -webkit-animation-duration: 6s;
 }
 #sv6{
-      position: ABSOLUTE;
+    position: ABSOLUTE;
     top: 350px;
     left: -19px;
     -webkit-animation-duration: 10s; 
-  -webkit-animation-iteration-count: infinite;
-
-
 }
 
 #sv7{
   position: absolute;
     top: 100px;
     left: 300px;
+  -webkit-animation-duration: 15s;
 }
-
-
-#akiki{
-  margin-top: 0;
+#sv8{
     position: absolute;
-    top: 120px;
+    margin-left: 410px;
+    margin-top: 90px;
+    z-index: 1;
+    -webkit-animation-duration: 15s;
 }
+#sv9{
+    position: absolute;
+    left: -109px;
+    top: 270px;
+    z-index: 1;
+}
+
+#sv10{
+  position: absolute;
+    right: -50px;
+    bottom: 70px;
+}
+
+#sv11{
+    position: absolute;
+    bottom: -10px;
+    left: 550;
+    z-index: 1;
+}
+
+.headerstay{
+    z-index: 10;
+    font-size: 60;
+    position: fixed;
+    width: 100%;
+    text-align: center;
+        margin-left: 13px;
+    top: -8px;
+}
+
+
 /*
 #test{
 /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ffffff+0,ff3033+50,ffffff+100 */
