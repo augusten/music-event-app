@@ -64,9 +64,9 @@ router.get( '/', ( req, res ) => {
 })
 
 // after authorization redirect to search
-router.get( '/search', ( req, res ) => {
+router.get( '/spot', ( req, res ) => {
 	let usr = req.session.user
-	res.redirect( '/searchevent')
+	res.redirect( '/search')
 	// res.render( 'search', {user: usr} )
 })
 
@@ -187,7 +187,7 @@ router.get('/callback', function(req, res) {
 			        		where: {user_id: body.id}
 			        	}).then( usr => {
 			        		req.session.user = usr
-			        		res.redirect('/search?' +
+			        		res.redirect('/spot?' +
           						querystring.stringify({
             						access_token: access_token,
             						refresh_token: refresh_token
@@ -200,7 +200,7 @@ router.get('/callback', function(req, res) {
 		    })
 	    })
       } else {
-        res.redirect('/search?' +
+        res.redirect('/spot?' +
           querystring.stringify({
             error: 'invalid_token'
           }))

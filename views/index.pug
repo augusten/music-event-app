@@ -15,10 +15,17 @@ html
 			div(id="main" class="col-md-12")
 				div(class="col-md-1")
 					p(onclick="openNav()" class="navnav" ) 
-						span ⌂
+						span 
 
 				div(class="col-md-10")
 					div(class="firstPart")
+						img(class="sv animated" id="sv1 jello" width ="30%" src="/IMGS/tesing.svg" alt="")
+						img(class="sv" id="sv2" width ="30%" src="/IMGS/testing2.svg" alt="")
+						img(class="sv animated jello" id="sv3" width ="40%" src="/IMGS/testing3.svg" alt="")
+						img(class="sv animated jello" id="sv4" width ="20%" src="/IMGS/testing4.svg" alt="")
+						img(class="sv animated wobble" id="sv5" width ="30%" src="/IMGS/testing5.svg" alt="")
+						img(class="sv animated jello" id="sv6" width ="40%" src="/IMGS/testing6.svg" alt="")
+						img(class="sv animated jello" id="sv7" width ="40%" src="/IMGS/testing7.svg" alt="")
 						h1(class="title") Get lazyy
 						p(class="smalltxt") A web app for <span id="js-rotating">Lazy, Passionate, Musical, Party </span> people.
 
@@ -28,14 +35,26 @@ html
 				div(class="col-md-1")
 				div(class="col-md-10")
 					div(id="click")
-						a(href="#" id="link") ↓
+						a(href="#" id="link" )
+							p(class="text-center") ↓
 
 					div(class="secondPart" id="anchorS" class="anchor-scroll" data-class-to="body" data-on-scroll="blur-effect")
-						a(name="aki")
-						p(class="intro") Lazyy helps you to find events close by where you are, based on what you are listening to on Spotify! It makes your evening way easier to plan !
+						a(name="aki" id="akiki")
+						p(class="intro") Lazyy helps you to find events close by where you are, based on what you are listening to on Spotify!
+						
 
-						div(id="login")
-							a(href="/login" ) log in with spotify
+					div(id="login" class="thirdPart" class="anchor-scroll" data-class-to="body" data-on-scroll="blur-effect" )
+						p(class="come text-center") Come on,<br>Log in here !
+						button(type="button" class="btn btn-default btn-lg")
+							a(href="/login" id="lolog") log in with spotify
+
+				div(id="main3" class="col-md-12")
+					div(id="footer")
+						div(class="container")
+							p(class="text-muted credit") something
+
+
+
 				div(class="col-md-1")
 
 				
@@ -43,5 +62,4 @@ html
 		script(src="/Morphext/dist/morphext.min.js")
 		script(src="/js/jquery.anchorScroll.min.js")
 		script(src="/js/main.js")
-
 
