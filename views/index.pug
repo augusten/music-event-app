@@ -9,6 +9,8 @@ html
 
 	body
 		div(class="row")
+			p(class="headerstay") ⁌⁍
+
 			div(id="leftNav" class="myLeftNav")
 				p(class="closebtn" onclick="closeNav()") x
 
@@ -19,13 +21,19 @@ html
 
 				div(class="col-md-10")
 					div(class="firstPart")
-						img(class="sv animated" id="sv1 jello" width ="30%" src="/IMGS/tesing.svg" alt="")
-						img(class="sv" id="sv2" width ="30%" src="/IMGS/testing2.svg" alt="")
-						img(class="sv animated jello" id="sv3" width ="40%" src="/IMGS/testing3.svg" alt="")
-						img(class="sv animated jello" id="sv4" width ="20%" src="/IMGS/testing4.svg" alt="")
-						img(class="sv animated wobble" id="sv5" width ="30%" src="/IMGS/testing5.svg" alt="")
-						img(class="sv animated jello" id="sv6" width ="40%" src="/IMGS/testing6.svg" alt="")
-						img(class="sv animated jello" id="sv7" width ="40%" src="/IMGS/testing7.svg" alt="")
+						img(class="sv animated " id="sv1" width ="30%" src="/IMGS/tesing.svg" alt="")
+						img(class="sv animated " id="sv2" width ="30%" src="/IMGS/testing2.svg" alt="")
+						img(class="sv animated " id="sv3" width ="40%" src="/IMGS/testing3.svg" alt="")
+						img(class="sv animated " id="sv4" width ="20%" src="/IMGS/testing4.svg" alt="")
+						img(class="sv animated " id="sv5" width ="30%" src="/IMGS/testing5.svg" alt="")
+						img(class="sv animated " id="sv6" width ="40%" src="/IMGS/testing6.svg" alt="")
+						img(class="sv animated " id="sv7" width ="40%" src="/IMGS/testing7.svg" alt="")
+						img(class="sv animated " id="sv8" width ="40%" src="/IMGS/testing8.svg" alt="")
+						img(class="sv animated " id="sv9" width ="20%" src="/IMGS/testing9.svg" alt="")
+						img(class="sv animated " id="sv10" width ="17%" src="/IMGS/testing10.svg" alt="")
+						img(class="sv animated " id="sv11" width ="15%" src="/IMGS/testing9.svg" alt="")
+
+
 						h1(class="title") Get lazyy
 						p(class="smalltxt") A web app for <span id="js-rotating">Lazy, Passionate, Musical, Party </span> people.
 
@@ -35,25 +43,21 @@ html
 				div(class="col-md-1")
 				div(class="col-md-10")
 					div(id="click")
-						a(href="#" id="link" )
+						a(href="#anchorS" id="link" )
 							p(class="text-center") ↓
 
 					div(class="secondPart" id="anchorS" class="anchor-scroll" data-class-to="body" data-on-scroll="blur-effect")
-						a(name="aki" id="akiki")
+						div(class="betweenScroll")
 						p(class="intro") Lazyy helps you to find events close by where you are, based on what you are listening to on Spotify!
-						
-
-					div(id="login" class="thirdPart" class="anchor-scroll" data-class-to="body" data-on-scroll="blur-effect" )
-						p(class="come text-center") Come on,<br>Log in here !
-						button(type="button" class="btn btn-default btn-lg")
-							a(href="/login" id="lolog") log in with spotify
-
 				div(id="main3" class="col-md-12")
-					div(id="footer")
-						div(class="container")
-							p(class="text-muted credit") something
-
-
+					a(href="#login" id="link2" )
+								p(class="text-center") ↓
+					div(id="login" class="thirdPart" class="anchor-scroll" data-class-to="body" data-on-scroll="blur-effect" )
+						div(class="betweenScroll")
+						p(class="come text-center") Come on,<br>Log in here !
+						div(id="center-button")
+							button(type="button" id ="btnSpot" class="btn btn-default btn-lg")
+								a(href="/login" id="lolog") log in with spotify
 
 				div(class="col-md-1")
 
