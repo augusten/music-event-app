@@ -24,7 +24,11 @@ app.use(
 	session ({
 		secret: 'this is some secret',
 		resave: true,
-		saveUninitialized: false
+		saveUninitialized: true,
+		cookie: {
+			secure: false,
+			maxage: 3600
+		}
 	})
 )
 

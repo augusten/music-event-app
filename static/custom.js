@@ -1,5 +1,10 @@
 $(document).ready(function () {
   console.log("jquery is working")
+  $('#map').hide()
+  $('#submit').click(function() {
+    $('#map').show()
+    initMap()
+  })
 })
 
 // initialises google maps, Amsterdam as a default location on the map
@@ -31,7 +36,16 @@ function geocodeAddress(geocoder, resultsMap) {
         longitude: results[0].geometry.location.lng()
       }
 
-      $.get("/searchevent", latlen)
+      console.log(latlen)
+
+      $.get("/searchevent", latlen, (data, stat) => {
+        $('#results').empty()
+        console.log(data.length)
+
+        for (let i = 0; i < data.length; i++) {
+          $('#results').append(data[i].name + "<br>" + data[i].venue.location.city + "<br>")          
+        }
+      })
 
     } else {
       alert('Geocode was not successful for the following reason: ' + status);

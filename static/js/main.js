@@ -22,10 +22,15 @@ function getRandomInt(min, max) {
 
 /////////////////JQUERY STARTS HERE //////////////////
 
-$(document).ready(function() {
-	console.log("dom ready")
-	$(window).scroll(function(){
-		console.log("someone scrolled")
+	$(document).ready(function() {
+		console.log("dom ready")
+		$('#map').hide()
+		$('#submitMap').click(function() {
+	   		$('#map').show()
+	    	initMap()
+		$(window).scroll(function(){
+			console.log("someone scrolled")
+  		})
 	})
 
 	////////---Text effect rotating
@@ -102,4 +107,76 @@ $(document).on('click', 'a', function(event){
 })
 
 
+// initialises google maps, Amsterdam as a default location on the map
+function initMap() {
+  var map = new google.maps.Map(document.getElementById('map'), {
+    zoom: 8,
+    center: {lat: 52.3702157, lng: 4.895167899999933}
+  });
+  var geocoder = new google.maps.Geocoder();
 
+  document.getElementById('submitMap').addEventListener('click', function() {
+    geocodeAddress(geocoder, map);
+  });
+}
+
+events = []
+
+// searches location, outputs latitude and longitude to facebook search
+function geocodeAddress(geocoder, resultsMap) {
+  var address = document.getElementById('address').value;
+  geocoder.geocode({'address': address}, function(results, status) {
+    if (status === 'OK') {
+      resultsMap.setCenter(results[0].geometry.location);
+      var marker = new google.maps.Marker({
+        map: resultsMap,
+        position: results[0].geometry.location
+      })
+
+      let latlen = {
+        latitude: results[0].geometry.location.lat(),
+        longitude: results[0].geometry.location.lng()
+      }
+
+      console.log(latlen)
+
+      $.get("/searchevent", latlen, (data, stat) => {
+        $('#results').empty()
+        console.log(data)
+
+        for (let i = 0; i < data.length; i++) {
+        	let date = data[i].startTime.substring(0, 10)
+        	let time = data[i].startTime.substring(11, 16)
+
+        	events.push(data[i])
+
+          $('#results').append("<div class='col-md-4'><div class='box'>"+ data[i].name + "<br>" + data[i].venue.location.city + "<br>" + date + ", " + time + "<br>" +"<a href=https://www.facebook.com/events/" + data[i].id + ">go to event</a></div></div>")          
+        }
+      })
+
+    } else {
+      alert('Geocode was not successful for the following reason: ' + status);
+    }
+  });
+}
+
+// sorting results according to date
+$('#sortDate').click(function () {
+
+
+	for (let i = 0; i < events.length; i++) {
+	events[i].startTime.sort(function(a,b){return a.getTime() - b.getTime()})
+	}
+
+	alert(events.join(","));
+
+	$('#results').empty()
+
+    for (let i = 0; i < events.length; i++) {
+
+    	let date = events[i].startTime.substring(0, 10)
+    	let time = events[i].startTime.substring(11, 16)
+
+      $('#results').append("<div class='col-md-4'><div class='box'>"+ data[i].name + "<br>" + data[i].venue.location.city + "<br>" + date + ", " + time + "<br>" +"<a href=https://www.facebook.com/events/" + data[i].id + ">go to event</a></div></div>")          
+    }
+})
