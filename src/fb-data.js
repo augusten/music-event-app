@@ -137,27 +137,27 @@ router.get("/events", function(req, res) {
 
                             // console.log( usr.list_artists[j] )
                             eventList.push(events.events[i])
-                           
-                        //    Fb_event.findOne({
-                        //        where: {event_url:'https://www.facebook.com/events/' + events.events[i].id}
-                        //    }).then ( ev => {
-                        //        if ( ev === null ) {
-                        //            Fb_event.create( {
-                        //                event_url: 'https://www.facebook.com/events/' + events.events[i].id,
-                         //               e_name: events.events[i].name,
-                          //              city: events.events[i].venue.location.city,
-                            //            venue: events.events[i].venue.name,
-                              //          latitude: events.events[i].venue.location.latitude,
-                                //        longitude: events.events[i].venue.location.longitude,
-                        //                coverphoto: events.events[i].coverPicture
-                        //            })
-                        //            .then( evn => {
-                        //                ev.addUser( usr )
-                        //            })                              
-                        //        } else {
-                        //            ev.addUser ( usr )
-                        //        }
-                        //    })
+
+                            // Fb_event.findOne({
+                            //     where: {event_url:'https://www.facebook.com/events/' + events.events[i].id}
+                            // }).then ( ev => {
+                            //     if ( ev === null ) {
+                            //         Fb_event.create( {
+                            //             event_url: 'https://www.facebook.com/events/' + events.events[i].id,
+                            //             e_name: events.events[i].name,
+                            //             city: events.events[i].venue.location.city,
+                            //             venue: events.events[i].venue.name,
+                            //             latitude: events.events[i].venue.location.latitude,
+                            //             longitude: events.events[i].venue.location.longitude,
+                            //             coverphoto: events.events[i].coverPicture
+                            //         })
+                            //         .then( evn => {
+                            //             evn.addUser( usr )
+                            //         })                              
+                            //     } else {
+                            //         ev.addUser ( usr )
+                            //     }
+                            // })
                         }
                     }
                 }

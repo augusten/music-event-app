@@ -48,7 +48,7 @@ function getRandomInt(min, max) {
  	
 ////////---Scroll functions
 	
-$(document).on('click', 'a', function(event){
+$(document).on('click', 'a.smooth', function(event){
     event.preventDefault();
 
     $('html, body').animate({
