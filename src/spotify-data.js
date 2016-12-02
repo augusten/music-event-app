@@ -13,6 +13,20 @@ const querystring = require('querystring')
 const router = express.Router()
 const app = express()
 
+// For logged in user use session
+app.use(
+    express.static( __dirname + '/../static' ),
+    session ({
+        secret: 'this is some secret',
+        resave: true,
+        saveUninitialized: false,
+        cookie: {
+            secure: false,
+            maxage: 36000
+        }
+    })
+)
+
 // User authorization based on Spotify tutorial from https://github.com/spotify/web-api-auth-examples
 let client_id = process.env.SPOT_CLIENT_ID
 let client_secret = process.env.SPOT_CLIENT_SECRET
@@ -51,8 +65,7 @@ let User = db.define( 'user', {
 	name: Sequelize.STRING,
 	email: Sequelize.STRING,
 	list_artists: Sequelize.ARRAY(Sequelize.STRING),
-	photo: Sequelize.STRING,
-	top_artists: Sequelize.ARRAY(Sequelize.STRING)
+	photo: Sequelize.STRING
 })
 
 /////////////////////////////////////////////////////////////////////////

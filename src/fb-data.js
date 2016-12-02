@@ -69,7 +69,8 @@ let User = db.define( 'user', {
     user_id: Sequelize.STRING,
     name: Sequelize.STRING,
     email: Sequelize.STRING,
-    list_artists: Sequelize.ARRAY(Sequelize.STRING)
+    list_artists: Sequelize.ARRAY(Sequelize.STRING),
+    photo: Sequelize.STRING
 })
 
 // let UserProject = db.define('user_project', {
