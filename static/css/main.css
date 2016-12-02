@@ -266,10 +266,15 @@ shape .shape_1 {
   margin-left: 13px;
   top: -8px; }
 
+
+
 /* ---------- Geolocation Search----------- */
+
+
 #map {
-  height: 30%;
-  margin: auto; }
+      height: 30%;
+      margin: auto;
+}
 
 #floating-panel {
   position: absolute;
@@ -278,7 +283,9 @@ shape .shape_1 {
   background-color: #fff;
   padding: 5px;
   text-align: center;
-  color: black; }
+  color: black;
+}
+
 
 .box {
   height: 300px;
@@ -288,7 +295,9 @@ shape .shape_1 {
   color: black;
   padding: 40px;
   margin: auto;
-  margin-top: 30px; }
+  margin-top: 30px;
+}
+
 
 #sortDistance {
   position: absolute;
@@ -297,7 +306,8 @@ shape .shape_1 {
   background-color: #fff;
   padding: 5px;
   text-align: center;
-  color: black; }
+  color: black;
+}
 
 #sortDate {
   position: absolute;
@@ -306,4 +316,5 @@ shape .shape_1 {
   background-color: #fff;
   padding: 5px;
   text-align: center;
-  color: black; }
+  color: black;
+}
