@@ -67,11 +67,13 @@ Fb_event.belongsToMany( User, { through: UserProject } )
 // route that redirects to search results
 router.get("/searchevent", (req, res) => {
     let user = req.session.user
+    console.log(req.query.latitude)
     res.redirect('/events?' + "lat=" + req.query.latitude + "&lng=" + req.query.longitude + "&distance=10000&sort=venue&accessToken=" + accToken )
 })
 
 // Main route for search
 router.get("/events", function(req, res) {
+
     let usr = req.session.user.user_id
 
     if (!req.query.lat || !req.query.lng) {
@@ -123,39 +125,44 @@ router.get("/events", function(req, res) {
                 where: {user_id: req.session.user.user_id}
             })
             .then ( usr => {
+
+                eventList = []
+
                 for (var i = events.events.length - 1; i >= 0; i--) {
+
                     for (var j = usr.list_artists.length - 1; j >= 0; j--) {
+                       // console.log(events.events[i])
                         // console.log( events.events[i].name.toLowerCase() )
                         if ( events.events[i].name.toLowerCase().indexOf( usr.list_artists[j].toLowerCase() + ' ') !== -1 ) {
 
                             // console.log( usr.list_artists[j] )
                             eventList.push(events.events[i])
-                            Fb_event.findOne({
-                                where: {event_url:'https://www.facebook.com/events/' + events.events[i].id}
-                            }).then ( ev => {
-                                if ( ev === null ) {
-                                    Fb_event.create( {
-                                        event_url: 'https://www.facebook.com/events/' + events.events[i].id,
-                                        e_name: events.events[i].name,
-                                        city: events.events[i].venue.location.city,
-                                        venue: events.events[i].venue.name,
-                                        latitude: events.events[i].venue.location.latitude,
-                                        longitude: events.events[i].venue.location.longitude,
-                                        coverphoto: events.events[i].coverPicture
-                                    })
-                                    .then( evn => {
-                                        evn.addUser( usr )
-                                    })                              
-                                } else {
-                                    ev.addUser ( usr )
-                                }
-                            })
+                           
+                        //    Fb_event.findOne({
+                        //        where: {event_url:'https://www.facebook.com/events/' + events.events[i].id}
+                        //    }).then ( ev => {
+                        //        if ( ev === null ) {
+                        //            Fb_event.create( {
+                        //                event_url: 'https://www.facebook.com/events/' + events.events[i].id,
+                         //               e_name: events.events[i].name,
+                          //              city: events.events[i].venue.location.city,
+                            //            venue: events.events[i].venue.name,
+                              //          latitude: events.events[i].venue.location.latitude,
+                                //        longitude: events.events[i].venue.location.longitude,
+                        //                coverphoto: events.events[i].coverPicture
+                        //            })
+                        //            .then( evn => {
+                        //                ev.addUser( usr )
+                        //            })                              
+                        //        } else {
+                        //            ev.addUser ( usr )
+                        //        }
+                        //    })
                         }
                     }
                 }
-            })
-            .then( () => {
-                res.redirect( '/darezult' )
+        }).then( () => {
+            res.redirect( '/darezult' )
             })
         }).catch(function (error) {
             res.status(500).json(error)
@@ -166,10 +173,11 @@ router.get("/events", function(req, res) {
 })
 
 router.get( '/darezult', ( req, res ) => {
-    // console.log( Object.keys(req) )
-    // console.log( eventList )
-    res.send( 'success ')
-})
+     //console.log( Object.keys(req) )
+//     console.log("this is ETFKJFFDKHFJDSFHDSK THE EVENT LIST")
+//     console.log( eventList )
+     res.send(eventList)
+ })
 
 /////////////////////////////////////////////////////////////////////////
 // ------------------------- SYNC DATABASE ------------------------

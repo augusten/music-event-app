@@ -180,6 +180,11 @@ router.get('/callback', function(req, res) {
 								email: body.email,
 								list_artists: artistArray
 				        	})
+				        } else {
+				        	User.update(
+				        		{list_artists: artistArray},
+				        		{where: {user_id: body.id}}
+				        	)
 				        }
 			        })
 			        .then( () => {
