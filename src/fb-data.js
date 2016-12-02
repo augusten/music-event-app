@@ -9,6 +9,7 @@ const request = require( 'request' )
 const Sequelize = require ('sequelize')
 const pg = require( 'pg' )
 const session = require ('express-session')
+const fs = require('fs')
 
 // Create the Express objects
 const app = express()
@@ -35,6 +36,14 @@ const EventSearch = require("facebook-events-by-location-core")
 let accToken = process.env.FEBL_ACCESS_TOKEN
 let connectionString = 'postgres://' + process.env.POSTGRES_USER + ':' + process.env.POSTGRES_PASSWORD + '@localhost/' + process.env.POSTGRES_SPOTFB
 let eventList = []
+let strict_filter = 'on'
+// let popular_words = ['Jaar', 'R&B', 'music', 'jazz', 'electronic']
+
+// preload strict filtering buzzwords 
+let popular_words
+fs.readFile( __dirname + '/../static/genres/genres.json', 'utf8', ( err, data ) => {
+    popular_words = JSON.parse(data)[0]["buzzwords"]
+})
 
 /////////////////////////////////////////////////////////////////////////
 // ------------------------- CREATE DATABASES USED ----------------------
@@ -139,39 +148,45 @@ router.get("/events", function(req, res) {
                 where: {user_id: req.session.user.user_id}
             })
             .then ( usr => {
-
                 eventList = []
-
                 for (var i = events.events.length - 1; i >= 0; i--) {
 
                     for (var j = usr.list_artists.length - 1; j >= 0; j--) {
-                       // console.log(events.events[i])
-                        // console.log( events.events[i].name.toLowerCase() )
-                        if ( events.events[i].name.toLowerCase().indexOf( usr.list_artists[j].toLowerCase() + ' ') !== -1 ) {
 
-                            // console.log( usr.list_artists[j] )
-                            eventList.push(events.events[i])
 
-                            // Fb_event.findOne({
-                            //     where: {event_url:'https://www.facebook.com/events/' + events.events[i].id}
-                            // }).then ( ev => {
-                            //     if ( ev === null ) {
-                            //         Fb_event.create( {
-                            //             event_url: 'https://www.facebook.com/events/' + events.events[i].id,
-                            //             e_name: events.events[i].name,
-                            //             city: events.events[i].venue.location.city,
-                            //             venue: events.events[i].venue.name,
-                            //             latitude: events.events[i].venue.location.latitude,
-                            //             longitude: events.events[i].venue.location.longitude,
-                            //             coverphoto: events.events[i].coverPicture
-                            //         })
-                            //         .then( evn => {
-                            //             evn.addUser( usr )
-                            //         })                              
-                            //     } else {
-                            //         ev.addUser ( usr )
-                            //     }
-                            // })
+                        if (strict_filter === 'on' && events.events[i].description !== null) {
+                            for (var k = popular_words.length - 1; k >= 0; k--) {
+                                if ( events.events[i].name.toLowerCase().indexOf( usr.list_artists[j].toLowerCase() + ' ') !== -1 && events.events[i].description.indexOf( popular_words[k] ) !==-1 ) {
+                                    console.log(events.events[i])
+                                    eventList.push(events.events[i])
+                                }
+                            }
+                            
+                        } else if (strict_filter === 'off' && events.events[i].description !== null) {
+                            if ( events.events[i].name.toLowerCase().indexOf( usr.list_artists[j].toLowerCase() + ' ') !== -1 ) {
+
+                                eventList.push(events.events[i])
+                                // Fb_event.findOne({
+                                //     where: {event_url:'https://www.facebook.com/events/' + events.events[i].id}
+                                // }).then ( ev => {
+                                //     if ( ev === null ) {
+                                //         Fb_event.create( {
+                                //             event_url: 'https://www.facebook.com/events/' + events.events[i].id,
+                                //             e_name: events.events[i].name,
+                                //             city: events.events[i].venue.location.city,
+                                //             venue: events.events[i].venue.name,
+                                //             latitude: events.events[i].venue.location.latitude,
+                                //             longitude: events.events[i].venue.location.longitude,
+                                //             coverphoto: events.events[i].coverPicture
+                                //         })
+                                //         .then( evn => {
+                                //             evn.addUser( usr )
+                                //         })                              
+                                //     } else {
+                                //         ev.addUser ( usr )
+                                //     }
+                                // })
+                            }
                         }
                     }
                 }
@@ -190,8 +205,9 @@ router.get( '/darezult', ( req, res ) => {
      //console.log( Object.keys(req) )
 //     console.log("this is ETFKJFFDKHFJDSFHDSK THE EVENT LIST")
 //     console.log( eventList )
-     res.send(eventList)
- })
+    res.send(eventList)
+})
+
 
 /////////////////////////////////////////////////////////////////////////
 // ------------------------- SYNC DATABASE ------------------------

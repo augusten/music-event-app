@@ -21,11 +21,11 @@ app.use(
 )
 
 router.get("/search", (req, res) => {
-	let user = req.session.user
-	if (user == undefined) {
-		res.redirect('/')
+	// console.log( req.session.user )
+	if ( req.session.user === undefined ) {
+		res.redirect( '/' )
 	} else {
-	  res.render('search', {
+		res.render('search', {
 			user: req.session.user
 		})
 	}

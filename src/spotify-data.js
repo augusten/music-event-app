@@ -58,7 +58,6 @@ let User = db.define( 'user', {
 
 // trial route
 router.get( '/', ( req, res ) => {
-	// console.log( req.session.user )
 	let usr = req.session.user
 	res.render( 'index' , {
 		user: req.session.user
@@ -69,7 +68,6 @@ router.get( '/', ( req, res ) => {
 router.get( '/spot', ( req, res ) => {
 	let usr = req.session.user
 	res.redirect( '/search')
-	// res.render( 'search', {user: usr} )
 })
 
 router.get('/login', function(req, res) {
@@ -82,6 +80,7 @@ router.get('/login', function(req, res) {
 		response_type: 'code',
 		client_id: client_id,
 		scope: scope,
+		show_dialog: false,
 		redirect_uri: redirect_uri,
 		state: state
 	}))
@@ -164,8 +163,9 @@ router.get('/callback', function(req, res) {
 			        				// loop through every track in the playlist
 			        				for (var j = bod.items.length - 1; j >= 0; j--) {
 			        					for (var k = bod.items[j].track.artists.length - 1; k >= 0; k--) {
-			        						// console.log(bod.items[j].track.artists)
+
 			        						artists.push(bod.items[j].track.artists[k].name)
+
 			        					}
 			        				}
 			        				setTimeout( () => {
