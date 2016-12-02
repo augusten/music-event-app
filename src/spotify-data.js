@@ -50,7 +50,9 @@ let User = db.define( 'user', {
 	user_id: Sequelize.STRING,
 	name: Sequelize.STRING,
 	email: Sequelize.STRING,
-	list_artists: Sequelize.ARRAY(Sequelize.STRING)
+	list_artists: Sequelize.ARRAY(Sequelize.STRING),
+	photo: Sequelize.STRING,
+	top_artists: Sequelize.ARRAY(Sequelize.STRING)
 })
 
 /////////////////////////////////////////////////////////////////////////
@@ -183,7 +185,8 @@ router.get('/callback', function(req, res) {
 				        		user_id: body.id,
 								name: body.display_name,
 								email: body.email,
-								list_artists: artistArray
+								list_artists: artistArray,
+								photo: body.images[0].url
 				        	})
 				        } else {
 				        	User.update(

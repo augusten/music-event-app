@@ -36,7 +36,7 @@ const EventSearch = require("facebook-events-by-location-core")
 let accToken = process.env.FEBL_ACCESS_TOKEN
 let connectionString = 'postgres://' + process.env.POSTGRES_USER + ':' + process.env.POSTGRES_PASSWORD + '@localhost/' + process.env.POSTGRES_SPOTFB
 let eventList = []
-let strict_filter = 'on'
+let strict_filter = 'off'
 // let popular_words = ['Jaar', 'R&B', 'music', 'jazz', 'electronic']
 
 // preload strict filtering buzzwords 
@@ -55,15 +55,15 @@ let db = new Sequelize( process.env.POSTGRES_SPOTFB, process.env.POSTGRES_USER ,
 })
 
 // Define the models of the database
-let Fb_event = db.define( 'fb_event', {
-    event_url: Sequelize.STRING,
-    e_name: Sequelize.STRING,
-    city: Sequelize.STRING,
-    venue: Sequelize.STRING,
-    latitude: Sequelize.STRING,
-    longitude: Sequelize.STRING,
-    coverphoto: Sequelize.STRING
-})
+// let Fb_event = db.define( 'fb_event', {
+//     event_url: Sequelize.STRING,
+//     e_name: Sequelize.STRING,
+//     city: Sequelize.STRING,
+//     venue: Sequelize.STRING,
+//     latitude: Sequelize.STRING,
+//     longitude: Sequelize.STRING,
+//     coverphoto: Sequelize.STRING
+// })
 
 let User = db.define( 'user', {
     user_id: Sequelize.STRING,
@@ -72,13 +72,13 @@ let User = db.define( 'user', {
     list_artists: Sequelize.ARRAY(Sequelize.STRING)
 })
 
-let UserProject = db.define('user_project', {
-  role: Sequelize.STRING
-});
+// let UserProject = db.define('user_project', {
+//   role: Sequelize.STRING
+// });
 
-// Define database relations
-User.hasMany( Fb_event )
-Fb_event.belongsToMany( User, { through: UserProject } )
+// // Define database relations
+// User.hasMany( Fb_event )
+// Fb_event.belongsToMany( User, { through: UserProject } )
 
 // variables of Amsterdam coordinates for development stage until we add the possibility to choose the city, and thus, the longitude and latitude
 // let lat 
