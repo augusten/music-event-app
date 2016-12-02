@@ -319,3 +319,51 @@ position: absolute;
 }
 
 
+
+/* ---------- Geolocation Search----------- */
+
+#map {
+      height: 30%;
+      margin: auto;
+}
+
+#floating-panel {
+  position: absolute;
+  top: 10px;
+  left: 25%;
+  background-color: #fff;
+  padding: 5px;
+  text-align: center;
+  color: black;
+}
+
+.box {
+  height: 300px;
+  width: 300px;
+  border-color: black;
+  border-style: solid;
+  color: black;
+  padding: 40px;
+  margin: auto;
+  margin-top: 30px;
+}
+
+#sortDistance {
+  position: absolute;
+  top: 50px;
+  left: 25%;
+  background-color: #fff;
+  padding: 5px;
+  text-align: center;
+  color: black;
+}
+
+#sortDate {
+  position: absolute;
+  top: 90px;
+  left: 25%;
+  background-color: #fff;
+  padding: 5px;
+  text-align: center;
+  color: black;
+}
