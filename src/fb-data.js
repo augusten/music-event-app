@@ -172,20 +172,6 @@ router.get( '/darezult', ( req, res ) => {
 /////////////////////////////////////////////////////////////////////////
 // ------------------------- SYNC DATABASE ------------------------
 
-// db.sync( {force: true} ).then( db => {
-//  console.log( 'Synced' )
-
-//  // Create 1 demo event
-//     Fb_event.create( {
-//         event_url: 'https://www.facebook.com/events/' + '1667110543580518',
-//         e_name: 'LIVE: Psichodelinis Šuo + Lukas Norkūnas',
-//         city: 'Vilnius',
-//         venue: 'Liverpool Indie/Rock Bar',
-//         latitude: '54.6872',
-//         longitude: '25.2797',
-//     })
-// })
-
 db.sync()
 
 /////////////////////////////////////////////////////////////////////////

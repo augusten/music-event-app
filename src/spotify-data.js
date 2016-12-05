@@ -58,7 +58,6 @@ let db = new Sequelize( process.env.POSTGRES_SPOTFB, process.env.POSTGRES_USER ,
 })
 
 // Define the models of the database
-// let User = db.define
 
 let User = db.define( 'user', {
 	user_id: Sequelize.STRING,
