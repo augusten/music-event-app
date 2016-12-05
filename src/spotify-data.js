@@ -10,9 +10,22 @@ const bodyParser = require('body-parser')
 const request = require('request')
 const Promise = require('promise')
 const querystring = require('querystring')
-// const cookieParser = require('cookie-parser')
 const router = express.Router()
 const app = express()
+
+// For logged in user use session
+app.use(
+    express.static( __dirname + '/../static' ),
+    session ({
+        secret: 'this is some secret',
+        resave: true,
+        saveUninitialized: false,
+        cookie: {
+            secure: false,
+            maxage: 36000
+        }
+    })
+)
 
 // User authorization based on Spotify tutorial from https://github.com/spotify/web-api-auth-examples
 let client_id = process.env.SPOT_CLIENT_ID
@@ -45,13 +58,13 @@ let db = new Sequelize( process.env.POSTGRES_SPOTFB, process.env.POSTGRES_USER ,
 })
 
 // Define the models of the database
-// let User = db.define
 
 let User = db.define( 'user', {
 	user_id: Sequelize.STRING,
 	name: Sequelize.STRING,
 	email: Sequelize.STRING,
-	list_artists: Sequelize.ARRAY(Sequelize.STRING)
+	list_artists: Sequelize.ARRAY(Sequelize.STRING),
+	photo: Sequelize.STRING
 })
 
 /////////////////////////////////////////////////////////////////////////
@@ -60,14 +73,15 @@ let User = db.define( 'user', {
 // trial route
 router.get( '/', ( req, res ) => {
 	let usr = req.session.user
-	res.render( 'index' )
+	res.render( 'index' , {
+		user: req.session.user
+	})
 })
 
 // after authorization redirect to search
 router.get( '/spot', ( req, res ) => {
 	let usr = req.session.user
 	res.redirect( '/search')
-	// res.render( 'search', {user: usr} )
 })
 
 router.get('/login', function(req, res) {
@@ -80,13 +94,14 @@ router.get('/login', function(req, res) {
 		response_type: 'code',
 		client_id: client_id,
 		scope: scope,
+		show_dialog: false,
 		redirect_uri: redirect_uri,
 		state: state
 	}))
-	})
+})
 
 router.get('/callback', function(req, res) {
-
+	
 	// request refresh and access tokens
 	// after checking the state parameter
 	var code = req.query.code || null
@@ -98,6 +113,7 @@ router.get('/callback', function(req, res) {
 			error: 'state_mismatch'
 		}))
 	} else {
+	
 	var authOptions = {
 		url: 'https://accounts.spotify.com/api/token',
 	  	form: {
@@ -145,6 +161,7 @@ router.get('/callback', function(req, res) {
 
 			        		// look into playlist only if not empty
 				        		if (bodyTwo.items[i].tracks.total !== 0) {
+
 					        		var optionsThree = {
 					    				// get the tracks
 					      				url: bodyTwo.items[i].tracks.href,
@@ -160,7 +177,9 @@ router.get('/callback', function(req, res) {
 			        				// loop through every track in the playlist
 			        				for (var j = bod.items.length - 1; j >= 0; j--) {
 			        					for (var k = bod.items[j].track.artists.length - 1; k >= 0; k--) {
+
 			        						artists.push(bod.items[j].track.artists[k].name)
+
 			        					}
 			        				}
 			        				setTimeout( () => {
@@ -178,7 +197,8 @@ router.get('/callback', function(req, res) {
 				        		user_id: body.id,
 								name: body.display_name,
 								email: body.email,
-								list_artists: artistArray
+								list_artists: artistArray,
+								photo: body.images[0].url
 				        	})
 				        } else {
 				        	User.update(
@@ -213,6 +233,13 @@ router.get('/callback', function(req, res) {
     })
   }
 })
+
+router.get( '/out', ( req, res ) => {
+	AuthenticationClient.clearCookies(getApplication());
+	res.send( 'logged out? ')
+})
+
+
 
 /////////////////////////////////////////////////////////////////////////
 // ------------------------- SYNC DATABASE ------------------------
