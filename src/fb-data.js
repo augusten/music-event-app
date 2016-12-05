@@ -71,7 +71,7 @@ let User = db.define( 'user', {
 router.get("/searchevent", (req, res) => {
     let user = req.session.user
     console.log(req.query.latitude)
-    res.redirect('/events?' + "lat=" + req.query.latitude + "&lng=" + req.query.longitude + "&distance=10000&sort=venue&accessToken=" + accToken )
+    res.redirect('/events?' + "lat=" + req.query.latitude + "&lng=" + req.query.longitude + "&distance=1000&sort=venue&accessToken=" + accToken )
 })
 
 // Main route for search
