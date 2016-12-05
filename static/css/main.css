@@ -266,10 +266,15 @@ shape .shape_1 {
   margin-left: 13px;
   top: -8px; }
 
+
+
 /* ---------- Geolocation Search----------- */
+
+
 #map {
-  height: 30%;
-  margin: auto; }
+      height: 30%;
+      margin: auto;
+}
 
 #floating-panel {
   position: absolute;
@@ -278,7 +283,9 @@ shape .shape_1 {
   background-color: #fff;
   padding: 5px;
   text-align: center;
-  color: black; }
+  color: black;
+}
+
 
 .box {
   height: 300px;
@@ -288,7 +295,9 @@ shape .shape_1 {
   color: black;
   padding: 40px;
   margin: auto;
-  margin-top: 30px; }
+  margin-top: 30px;
+}
+
 
 #sortDistance {
   position: absolute;
@@ -297,7 +306,8 @@ shape .shape_1 {
   background-color: #fff;
   padding: 5px;
   text-align: center;
-  color: black; }
+  color: black;
+}
 
 #sortDate {
   position: absolute;
@@ -306,4 +316,43 @@ shape .shape_1 {
   background-color: #fff;
   padding: 5px;
   text-align: center;
-  color: black; }
+  color: black;
+}
+
+
+* { box-sizing: border-box; }
+
+/* ---- grid ---- */
+
+.grid {
+  background: #DDD;
+  max-width: 1200px;
+}
+
+/* clear fix */
+.grid:after {
+  content: '';
+  display: block;
+  clear: both;
+}
+
+/* ---- .grid-item ---- */
+
+.grid-item {
+  float: left;
+  width: 100px;
+  height: 100px;
+  background: #0D8;
+  border: 2px solid #333;
+  border-color: hsla(0, 0%, 0%, 0.7);
+  margin: 30px;
+
+}
+
+.grid-item--width2 { width: 200px; }
+.grid-item--height2 { height: 200px; }
+
+.grid-sizer {
+  width: 20%;
+  height: 110px;
+}

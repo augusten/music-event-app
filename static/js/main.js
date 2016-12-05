@@ -31,6 +31,16 @@ $(document).ready(function() {
 		$(window).scroll(function(){
 			console.log("someone scrolled")
 		})
+// external js: isotope.pkgd.js, cells-by-row.js
+
+	$('.grid').isotope({
+	  layoutMode: 'cellsByRow',
+	  itemSelector: '.grid-item',
+	  cellsByRow: {
+	    columnWidth: 220,
+	    rowHeight: 220
+	  }
+});
 	})
 
 	////////---Text effect rotating
@@ -142,6 +152,9 @@ function geocodeAddress(geocoder, resultsMap) {
 			console.log(latlen)
 
 			$.get("/searchevent", latlen, (data, stat) => {
+
+				randCells.sort(randOrd)
+
 				$('#results').empty()
 				console.log(data)
 
@@ -151,7 +164,7 @@ function geocodeAddress(geocoder, resultsMap) {
 
 					events.push(data[i])
 
-					$('#results').append("<div class='col-md-4'><div class='box'>"+ data[i].name + "<br>" + data[i].venue.location.city + "<br>" + date + ", " + time + "<br>" +"<a href=https://www.facebook.com/events/" + data[i].id + ">go to event</a></div></div>")          
+					$('#results').append( randCells[i]+ data[i].name + "<br>" + data[i].venue.location.city + ", distance: " + events[i].distance + "m <br>" + date + ", " + time + "<br>" +"<a href=https://www.facebook.com/events/" + data[i].id + ">go to event</a></div></div>")
 				}
 			})
 
@@ -161,30 +174,79 @@ function geocodeAddress(geocoder, resultsMap) {
 	});
 }
 
-// sorting results according to date
-$('#sortDate').click(function () {
+let randCells = 
+  ['<div class="grid-item grid-item--width2>',
+    '<div class="grid-item grid-item--height2">',
+    '<div class="grid-item">',
+    '<div class="grid-item">',
+    '<div class="grid-item grid-item--width2 grid-item--height2">',
+    '<div class="grid-item grid-item--width2">',
+    '<div class="grid-item grid-item--width2">',
+    '<div class="grid-item grid-item--width2 grid-item--height2">',
+    '<div class="grid-item">',
+    '<div class="grid-item grid-item--width2">',
+    '<div class="grid-item grid-item--height2">',
+    '<div class="grid-item">',
+    '<div class="grid-item">',
+    '<div class="grid-item grid-item--width2 grid-item--height2">',
+    '<div class="grid-item grid-item--width2">',
+    '<div class="grid-item grid-item--width2">',
+    '<div class="grid-item grid-item--width2 grid-item--height2">',
+    '<div class="grid-item">',
+    '<div class="grid-item grid-item--width2">',
+    '<div class="grid-item grid-item--height2">',
+    '<div class="grid-item">']
 
+// function to randomise items when applied to an array
+function randOrd(){
+	return (Math.round(Math.random())-0.5) 
+}
 
-
-	function compare(a,b) {
-		if (a.startTime < b.startTime)
-			return 1;
-		if (a.startTime > b.startTime)
-			return -1;
-		return 0;
-	}
-
-	console.log(events)
-	events.sort(compare)
-	console.log(events)
-
-	$('#results').empty()
-
+// function that appends events to the results id after sorting
+function append() {
 	for (let i = 0; i < events.length; i++) {
 
 		let date = events[i].startTime.substring(0, 10)
 		let time = events[i].startTime.substring(11, 16)
 
-	//	$('#results').append("<div class='col-md-4'><div class='box'>"+ data[i].name + "<br>" + data[i].venue.location.city + "<br>" + date + ", " + time + "<br>" +"<a href=https://www.facebook.com/events/" + data[i].id + ">go to event</a></div></div>")          
+		$('#results').append(randCells[i]+ events[i].name + "<br>" + events[i].venue.location.city + ", distance: " + events[i].distance + "m <br>" + date + ", " + time + "<br>" +"<a href=https://www.facebook.com/events/" + events[i].id + ">go to event</a></div></div>")          
 	}
+}
+
+
+// sorting results according to date
+$('#sortDate').click(function () {
+
+	$('#results').empty()
+
+	randCells.sort(randOrd)
+
+	function compare(a,b) {
+		if (a.startTime > b.startTime)
+			return 1;
+		if (a.startTime < b.startTime)
+			return -1;
+		return 0;
+	}
+
+//	console.log(events)
+	events.sort(compare, append())
+//	console.log(events)
+	
+})
+
+$("#sortDistance").click(function() {
+	$('#results').empty()
+
+	randCells.sort(randOrd)
+
+	function compare(a,b) {
+		if (a.distance < b.startTime)
+			return 1;
+		if (a.distance > b.startTime)
+			return -1;
+		return 0;
+	}
+
+	events.sort(compare, append())
 })
