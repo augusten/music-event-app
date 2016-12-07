@@ -208,7 +208,6 @@ router.get('/callback', function(req, res) {
 				        }
 			        })
 			        .then( () => {
-			        	console.log(artistArray)
 			        	User.findOne({
 			        		where: {user_id: body.id}
 			        	}).then( usr => {
@@ -263,7 +262,7 @@ router.get( '/out', ( req, res ) => {
 // 	} )
 // })
 
-db.sync({force:true})
+db.sync()
 
 /////////////////////////////////////////////////////////////////////////
 // ------------------------- EXPORT ROUTES ------------------------
