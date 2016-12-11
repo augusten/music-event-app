@@ -11,4 +11,4 @@ The project uses:
 - mostly custom made front-end
 - SASS
 - Spotify user authorization
-- `npm` modules: spotify-web-api-node, facebook-events-by-location-core, sequelize, express, async
+- `npm` modules, such as spotify-web-api-node, facebook-events-by-location-core, sequelize, express, async
