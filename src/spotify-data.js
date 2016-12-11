@@ -8,63 +8,46 @@ const express = require ('express')
 const session = require ('express-session')
 const bodyParser = require('body-parser')
 const request = require('request')
-const Promise = require('promise')
+// const Promise = require('promise')
 const querystring = require('querystring')
 const router = express.Router()
 const app = express()
+const async = require ( 'async' )
+const Spotify = require('spotify-web-api-node' )
+
+// load database module and the model
+const database = require( __dirname + '/database' )
+let db = database.DB()
+let User = database.User( db )
+
+// some helper functions form module
+const helpers = require( __dirname + '/helpers' )
 
 // For logged in user use session
 app.use(
-    express.static( __dirname + '/../static' ),
-    session ({
-        secret: 'this is some secret',
-        resave: true,
-        saveUninitialized: false,
-        cookie: {
-            secure: false,
-            maxage: 36000
-        }
-    })
+  express.static( __dirname + '/../static' ),
+  session ({
+    secret: 'this is some secret',
+    resave: true,
+    saveUninitialized: false,
+    cookie: {
+      secure: false,
+      maxage: 36000
+    }
+  })
 )
 
 // User authorization based on Spotify tutorial from https://github.com/spotify/web-api-auth-examples
-let client_id = process.env.SPOT_CLIENT_ID
-let client_secret = process.env.SPOT_CLIENT_SECRET
-let redirect_uri = process.env.SPOT_REDIRECT_URI
-let stateKey = 'spotify_auth_state'
-// let usr = null
+let CLIENT_ID = process.env.SPOT_CLIENT_ID // Your client id
+let CLIENT_SECRET = process.env.SPOT_CLIENT_SECRET // Your secret
+let REDIRECT_URI = process.env.SPOT_REDIRECT_URI // Your redirect uri
+let STATE_KEY = 'spotify_auth_state'
 
-/////////////////////////////////////////////////////////////////////////
-// ------------------------- NECESSARY FUNCTIONS ------------------------
-
-var generateRandomString = function(length) {
-	// function to create a a random string for the state
-	var text = ''
-	var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-
-	for (var i = 0; i < length; i++) {
-		text += possible.charAt(Math.floor(Math.random() * possible.length))
-	}
-	return text
-}
-
-/////////////////////////////////////////////////////////////////////////
-// ------------------------- CREATE DATABASES USED ----------------------
-
-// connect to database
-let db = new Sequelize( process.env.POSTGRES_SPOTFB, process.env.POSTGRES_USER , process.env.POSTGRES_PASSWORD, {
-	server: 'localhost',
-	dialect: 'postgres'
-})
-
-// Define the models of the database
-
-let User = db.define( 'user', {
-	user_id: Sequelize.STRING,
-	name: Sequelize.STRING,
-	email: Sequelize.STRING,
-	list_artists: Sequelize.ARRAY(Sequelize.STRING),
-	photo: Sequelize.STRING
+// call to Spotify API
+const spotifyApi = new Spotify ({
+  clientId: CLIENT_ID,
+  clientSecret: CLIENT_SECRET,
+  redirectUri: REDIRECT_URI
 })
 
 /////////////////////////////////////////////////////////////////////////
@@ -84,183 +67,82 @@ router.get( '/spot', ( req, res ) => {
 	res.redirect( '/search')
 })
 
+// login get request
 router.get('/login', function(req, res) {
-
-	var state = generateRandomString(16)
+	let state = helpers.generateRandomString(16)
+	let scopes = ['user-read-private', 'user-read-email', 'playlist-read-private']
 	// request authorization
-	var scope = 'user-read-private user-read-email playlist-read-private';
-	res.redirect('https://accounts.spotify.com/authorize?' +
-	querystring.stringify({
-		response_type: 'code',
-		client_id: client_id,
-		scope: scope,
-		show_dialog: false,
-		redirect_uri: redirect_uri,
-		state: state
-	}))
+	res.redirect( spotifyApi.createAuthorizeURL( scopes, state ) )
 })
 
-router.get('/callback', function(req, res) {
-	
-	// request refresh and access tokens
-	// after checking the state parameter
-	var code = req.query.code || null
-	var state = req.query.state || null
+// callback request after authorization
+router.get('/callback', ( req, res ) => {
+  const { code, state } = req.query // get the code and state returned from authURL
+  // authorization codeto set up tokens necessary
+  if (state === null) {
+    res.redirect('#state_mismatch')
+  } else {
+    spotifyApi.authorizationCodeGrant( code )
+    
+    .then( data => {
+      // assign access and refresh tokens for session
+      spotifyApi.setAccessToken( data.body.access_token )
+      spotifyApi.setRefreshToken( data.body.refresh_token )
 
-	if (state === null ){
-	res.redirect('/#' +
-		querystring.stringify({
-			error: 'state_mismatch'
-		}))
-	} else {
-	
-	var authOptions = {
-		url: 'https://accounts.spotify.com/api/token',
-	  	form: {
-	    	code: code,
-	    	redirect_uri: redirect_uri,
-	    	grant_type: 'authorization_code'
-	  	},
-	  	headers: {
-	    	'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64'))
-	  	},
-	  	json: true
-	}
+      // get user personal information/authorization
+      spotifyApi.getMe()
 
-    request.post(authOptions, function(error, response, body) {
-      if (!error && response.statusCode === 200) {
+      .then( profile => {
+        User.findOne({
+          where: { user_id: profile.body.id }
+        })
 
-        var access_token = body.access_token,
-            refresh_token = body.refresh_token
+        .then( user => {
+            // create new user in database if they do not exist yet
+            if (user === null) {
+              User.create({
+                user_id: profile.body.id,
+                name: profile.body.display_name,
+                email: profile.body.email,
+                list_artists: [],
+                photo: profile.body.images[0].url
+              })
+            }
+            // based on the profile retriece their playlists; output will be an array of playlist objects
+            spotifyApi.getUserPlaylists(profile.body.id)
+            
+            .then( playlists => {
+              req.session.user = user
 
-        var options = {
-          url: 'https://api.spotify.com/v1/me',
-          headers: { 'Authorization': 'Bearer ' + access_token },
-          json: true
-        }
-
-        var optionsTwo = {
-          url: 'https://api.spotify.com/v1/me/playlists',
-          headers: { 'Authorization': 'Bearer ' + access_token },
-          json: true
-        }
-        // use the access token to access the Spotify Web API
-        request.get(options, function(error, response, body) {
-			let firstProm = User.findOne({
-				where: {user_id: body.id}
-			})
-
-			let secondProm = firstProm.then( user => {
-		        request.get(optionsTwo, function(errorTwo, responseTwo, bodyTwo) {
-
-		        	// get all the artists listend to by the user
-		        	let artists = []
-		        	let ihatepromises = new Promise (( res, rej ) => {
-			        	for (var i = bodyTwo.items.length - 1; i >= 0; i--) {
-			        		let promOne = new Promise ( ( resolve, reject ) => {
-
-			        		// look into playlist only if not empty
-				        		if (bodyTwo.items[i].tracks.total !== 0) {
-
-					        		var optionsThree = {
-					    				// get the tracks
-					      				url: bodyTwo.items[i].tracks.href,
-					      				headers: { 'Authorization': 'Bearer ' + access_token },
-					      				json: true
-					    			}
-					    			resolve( optionsThree )
-			        			}
-			        		})
-			        		let promTwo = promOne.then( (opt) => {
-			        			request.get(opt, (err, resp, bod) => {
-
-			        				// loop through every track in the playlist
-			        				for (var j = bod.items.length - 1; j >= 0; j--) {
-			        					for (var k = bod.items[j].track.artists.length - 1; k >= 0; k--) {
-
-			        						artists.push(bod.items[j].track.artists[k].name)
-
-			        					}
-			        				}
-			        				setTimeout( () => {
-			        					// only have unqique artist names in the array
-			        					res( Array.from(new Set(artists)) )
-			        				}, 1000)
-			        			})
-			        		})
-			        	}
-			        })
-			        ihatepromises.then( artistArray => {
-			        	// only add default information if the user has never used the app yet/ if not in database yet
-			        	if (user == null) {
-				        	User.create({
-				        		user_id: body.id,
-								name: body.display_name,
-								email: body.email,
-								list_artists: artistArray,
-								photo: body.images[0].url
-				        	})
-				        } else {
-				        	User.update(
-				        		{list_artists: artistArray},
-				        		{where: {user_id: body.id}}
-				        	)
-				        }
-			        })
-			        .then( () => {
-			        	User.findOne({
-			        		where: {user_id: body.id}
-			        	}).then( usr => {
-			        		req.session.user = usr
-			        		res.redirect('/spot?' +
-          						querystring.stringify({
-            						access_token: access_token,
-            						refresh_token: refresh_token
-          						})
-          					)
-			        	})
-
-			        })
-		        })
-		    })
-	    })
-      } else {
-        res.redirect('/spot?' +
-          querystring.stringify({
-            error: 'invalid_token'
-          }))
-      }
+              // function that updates the database with all the artists listened to in the playlist
+              helpers.getTracks ( playlists.body.items, data.body.access_token, ( artistArray ) => {
+                User.update(
+                  {list_artists: Array.from(new Set(artistArray)) }, // Array.from(new Set(artistArray))
+                  {where: {user_id: profile.body.id}
+                })
+              })
+              res.redirect('/spot#' + 
+                querystring.stringify({
+                  access_token: data.body.access_token,
+                  refresh_token: data.body.refresh_token
+                }))
+            })
+          })
+      } )
+    }, err => {
+      console.log( 'uh oh, something went wrong!')
     })
   }
 })
 
+// route to log user out from their Spotify account - has to be implemented still/frontend doesn't have the button
 router.get( '/out', ( req, res ) => {
 	AuthenticationClient.clearCookies(getApplication());
 	res.send( 'logged out? ')
 })
 
-
-
 /////////////////////////////////////////////////////////////////////////
 // ------------------------- SYNC DATABASE ------------------------
-
-// db.sync( {force: true} ).then( db => {
-// 	console.log( 'Synced' )
-
-// 	// Create 2 demo users
-// 	User.create( {
-// 		user_id: '11111111',
-// 		name: 'Auguste',
-// 		email: 'auguste@nausedaite.lt',
-// 		list_artists: ['hello', "it's", 'me']
-// 	} )
-// 	User.create( {
-// 		user_id: '22222222',
-// 		name: 'Guga',
-// 		email: 'auguste@nausedaite.lt',
-// 		list_artists: ['Leonard Cohen', "MOTHXR", 'MO']
-// 	} )
-// })
 
 db.sync()
 
