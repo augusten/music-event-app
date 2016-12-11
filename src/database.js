@@ -15,8 +15,7 @@ let User = ( db) => {
 		user_id: Sequelize.STRING,
 		name: Sequelize.STRING,
 		email: Sequelize.STRING,
-		list_artists: Sequelize.ARRAY(Sequelize.STRING),
-		photo: Sequelize.STRING
+		list_artists: Sequelize.ARRAY(Sequelize.STRING)
 	})
 }
 

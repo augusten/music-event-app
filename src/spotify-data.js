@@ -104,8 +104,7 @@ router.get('/callback', ( req, res ) => {
                 user_id: profile.body.id,
                 name: profile.body.display_name,
                 email: profile.body.email,
-                list_artists: [],
-                photo: profile.body.images[0].url
+                list_artists: []
               })
             }
             // based on the profile retriece their playlists; output will be an array of playlist objects
