@@ -11,6 +11,11 @@ const pg = require( 'pg' )
 const session = require ('express-session')
 const fs = require('fs')
 
+// load database module and the model
+const database = require( __dirname + '/database' )
+let db = database.DB()
+let User = database.User( db )
+
 // Create the Express objects
 const app = express()
 const router = express.Router()
@@ -36,32 +41,14 @@ const EventSearch = require("facebook-events-by-location-core")
 let accToken = process.env.FEBL_ACCESS_TOKEN
 let connectionString = 'postgres://' + process.env.POSTGRES_USER + ':' + process.env.POSTGRES_PASSWORD + '@localhost/' + process.env.POSTGRES_SPOTFB
 let eventList = []
-let strict_filter = 'off'
-// let popular_words = ['Jaar', 'R&B', 'music', 'jazz', 'electronic']
 
-// preload strict filtering buzzwords 
+// feature to allow search filtering - NOT YET IN THE FRONTEND
+let strict_filter = 'off'
+
 let popular_words
 fs.readFile( __dirname + '/../static/genres/genres.json', 'utf8', ( err, data ) => {
+    // preload strict filtering buzzwords 
     popular_words = JSON.parse(data)[0]["buzzwords"]
-})
-
-/////////////////////////////////////////////////////////////////////////
-// ------------------------- CREATE DATABASES USED ----------------------
-
-// connect to database
-let db = new Sequelize( process.env.POSTGRES_SPOTFB, process.env.POSTGRES_USER , process.env.POSTGRES_PASSWORD, {
-    server: 'localhost',
-    dialect: 'postgres'
-})
-
-// Define the modelsof the database
-
-let User = db.define( 'user', {
-    user_id: Sequelize.STRING,
-    name: Sequelize.STRING,
-    email: Sequelize.STRING,
-    list_artists: Sequelize.ARRAY(Sequelize.STRING),
-    photo: Sequelize.STRING
 })
 
 /////////////////////////////////////////////////////////////////////////
@@ -135,6 +122,7 @@ router.get("/events", function(req, res) {
 
 
                         if (strict_filter === 'on' && events.events[i].description !== null) {
+                            // code not yet implemented in the frontend
                             for (var k = popular_words.length - 1; k >= 0; k--) {
                                 if ( events.events[i].name.toLowerCase().indexOf( usr.list_artists[j].toLowerCase() + ' ') !== -1 && events.events[i].description.indexOf( popular_words[k] ) !==-1 ) {
                                     // find the events for the user
@@ -143,6 +131,7 @@ router.get("/events", function(req, res) {
                             }
                             
                         } else if (strict_filter === 'off' && events.events[i].description !== null) {
+                            // default search with a non-strict search
                             if ( events.events[i].name.toLowerCase().indexOf( usr.list_artists[j].toLowerCase() + ' ') !== -1 ) {
                                 // find the events for the user
                                 eventList.push(events.events[i])
@@ -162,9 +151,6 @@ router.get("/events", function(req, res) {
 })
 
 router.get( '/darezult', ( req, res ) => {
-     //console.log( Object.keys(req) )
-//     console.log("this is ETFKJFFDKHFJDSFHDSK THE EVENT LIST")
-//     console.log( eventList )
     res.send(eventList)
 })
 
