@@ -9,8 +9,6 @@ html
 
 	body
 		div(class="row")
-			p(class="headerstay") ⁌⁍
-
 			div(id="leftNav" class="myLeftNav")
 				p(class="closebtn" onclick="closeNav()") x
 
@@ -22,7 +20,7 @@ html
 				div(class="col-md-10")
 					div(class="firstPart")
 						img(class="sv animated " id="sv1" width ="30%" src="/IMGS/tesing.svg" alt="")
-						img(class="sv animated " id="sv2" width ="30%" src="/IMGS/testing2.svg" alt="")
+						img(class="sv animated " id="sv2" width ="26%" src="/IMGS/testing2.svg" alt="")
 						img(class="sv animated " id="sv3" width ="40%" src="/IMGS/testing3.svg" alt="")
 						img(class="sv animated " id="sv4" width ="20%" src="/IMGS/testing4.svg" alt="")
 						img(class="sv animated " id="sv5" width ="30%" src="/IMGS/testing5.svg" alt="")
@@ -35,7 +33,7 @@ html
 
 
 						h1(class="title") Get lazyy
-						p(class="smalltxt") A web app for <span id="js-rotating">Lazy, Passionate, Musical, Party </span> people.
+						p(class="smalltxt") A web app for <span class="js-rotating">Lazy, Passionate, Musical, Party </span> people.
 
 				div(class="col-md-1")
 
@@ -48,7 +46,7 @@ html
 
 					div(class="secondPart" id="anchorS" class="anchor-scroll" data-class-to="body" data-on-scroll="blur-effect")
 						div(class="betweenScroll")
-						p(class="intro") Lazyy helps you to find events close by where you are, based on what you are listening to on Spotify!
+						p(class="intro") Lazyy helps you to find events, <br>close to you, based on what you are listening to on Spotify!
 				div(id="main3" class="col-md-12")
 					a(href="#login" id="link2" class='smooth' )
 								p(class="text-center") ↓
@@ -60,9 +58,31 @@ html
 								a(href="/login" id="lolog") log in with spotify
 
 				div(class="col-md-1")
+				div(class="col-md-12")
+					footer(class="footer-distributed")
 
-				
+						div(class="footer-left")
+
+							h3 Get Lazyy					
+
+							p(class="footer-company-name") Get Lazyy &copy; 2015
+
+							div(class="footer-icons")
+
+
+						div(class="footer-right")
+
+							p Contact Us
+
+							form(action="#" method="post")
+
+								input(type="text" name="email" placeholder="Email")
+								textarea(name="message" placeholder="Message")
+								button Send
+
+						
 		script(src="/js/jquery-3.1.1.min.js")
+
 		script(src="/Morphext/dist/morphext.min.js")
 		script(src="/js/jquery.anchorScroll.min.js")
 		script(src="/js/main.js")

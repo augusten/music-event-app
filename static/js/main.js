@@ -44,7 +44,7 @@ $(document).ready(function() {
 	})
 
 	////////---Text effect rotating
-	$("#js-rotating").Morphext({
+	$(".js-rotating").Morphext({
 	    // The [in] animation type. Refer to Animate.css for a list of available animations.
 	    animation: "bounceIn",
 	    // An array of phrases to rotate are created based on this separator. Change it if you wish to separate the phrases differently (e.g. So Simple | Very Doge | Much Wow | Such Cool).
@@ -55,6 +55,7 @@ $(document).ready(function() {
 	        // Called after the entrance animation is executed.
 	    }
 	});
+
 
 ////////---Scroll functions
 
@@ -75,6 +76,15 @@ $('#btnSpot').hover(function() {
 			$('#btnSpot').removeClass('animated shake');
 		});
 });
+
+$('#submitMap').hover(function() {
+	$("#submitMap").addClass('animated shake').one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', 
+		function() {
+			$('#submitMap').removeClass('animated shake');
+		});
+});
+
+
 
 //////////----Functions for random timeout images distortion
 
@@ -117,6 +127,39 @@ var randomm = function() {
 	
 })
 
+$("#map").css({ opacity: 0, zoom: 0 });
+
+	// .panel {
+	// 	height: 100%;
+	// 	width: 100%;
+	// }
+	// .panel.green {
+	// 	margin-bottom: 400px
+	// }
+
+	$(function () { // wait for document ready
+		// init
+		var controller = new ScrollMagic.Controller({
+			globalSceneOptions: {
+				triggerHook: 'onLeave'
+			}
+		});
+
+		// get all slides
+		var slides = document.querySelectorAll("section.panel");
+
+		// create scene for every slide
+		for (var i=0; i<slides.length; i++) {
+			new ScrollMagic.Scene({
+					triggerElement: slides[i]
+				})
+				.setPin(slides[i])
+				.addIndicators() // add indicators (requires plugin)
+				.addTo(controller);
+		}
+	});
+
+
 
 // initialises google maps, Amsterdam as a default location on the map
 function initMap() {
@@ -153,8 +196,6 @@ function geocodeAddress(geocoder, resultsMap) {
 
 			$.get("/searchevent", latlen, (data, stat) => {
 
-				randCells.sort(randOrd)
-
 				$('#results').empty()
 				console.log(data)
 
@@ -164,7 +205,7 @@ function geocodeAddress(geocoder, resultsMap) {
 
 					events.push(data[i])
 
-					$('#results').append( randCells[i]+ data[i].name + "<br>" + data[i].venue.location.city + ", distance: " + events[i].distance + "m <br>" + date + ", " + time + "<br>" +"<a href=https://www.facebook.com/events/" + data[i].id + ">go to event</a></div></div>")
+					$('#results').append("<div class='col-md-3'> <div class='box'> <figure> <span> "+ data[i].name + "<figcaption>" + "<h3>" + data[i].venue.location.city + "<br>" + date + ", " + time + "<br>" +"<a href=https://www.facebook.com/events/" + data[i].id + "> go to event </a></div></div>")          
 				}
 			})
 
@@ -174,44 +215,6 @@ function geocodeAddress(geocoder, resultsMap) {
 	});
 }
 
-let randCells = 
-  ['<div class="grid-item grid-item--width2>',
-    '<div class="grid-item grid-item--height2">',
-    '<div class="grid-item">',
-    '<div class="grid-item">',
-    '<div class="grid-item grid-item--width2 grid-item--height2">',
-    '<div class="grid-item grid-item--width2">',
-    '<div class="grid-item grid-item--width2">',
-    '<div class="grid-item grid-item--width2 grid-item--height2">',
-    '<div class="grid-item">',
-    '<div class="grid-item grid-item--width2">',
-    '<div class="grid-item grid-item--height2">',
-    '<div class="grid-item">',
-    '<div class="grid-item">',
-    '<div class="grid-item grid-item--width2 grid-item--height2">',
-    '<div class="grid-item grid-item--width2">',
-    '<div class="grid-item grid-item--width2">',
-    '<div class="grid-item grid-item--width2 grid-item--height2">',
-    '<div class="grid-item">',
-    '<div class="grid-item grid-item--width2">',
-    '<div class="grid-item grid-item--height2">',
-    '<div class="grid-item">']
-
-// function to randomise items when applied to an array
-function randOrd(){
-	return (Math.round(Math.random())-0.5) 
-}
-
-// function that appends events to the results id after sorting
-function append() {
-	for (let i = 0; i < events.length; i++) {
-
-		let date = events[i].startTime.substring(0, 10)
-		let time = events[i].startTime.substring(11, 16)
-
-		$('#results').append(randCells[i]+ events[i].name + "<br>" + events[i].venue.location.city + ", distance: " + events[i].distance + "m <br>" + date + ", " + time + "<br>" +"<a href=https://www.facebook.com/events/" + events[i].id + ">go to event</a></div></div>")          
-	}
-}
 
 
 // sorting results according to date
@@ -230,15 +233,21 @@ $('#sortDate').click(function () {
 	}
 
 //	console.log(events)
-	events.sort(compare, append())
+	events.sort(compare)
 //	console.log(events)
+
+for (let i = 0; i < events.length; i++) {		
+ 	
+ 		let date = events[i].startTime.substring(0, 10)		
+ 		let time = events[i].startTime.substring(11, 16)		
+ 		
+		$('#results').append("<div class='col-md-4'><div class='box'>"+ events[i].name + "<br>" + events[i].venue.location.city + ", distance: " + events[i].distance + "m <br>" + date + ", " + time + "<br>" +"<a href=https://www.facebook.com/events/" + events[i].id + ">go to event</a></div></div>")          			}
 	
 })
 
 $("#sortDistance").click(function() {
 	$('#results').empty()
 
-	randCells.sort(randOrd)
 
 	function compare(a,b) {
 		if (a.distance < b.startTime)
@@ -248,5 +257,12 @@ $("#sortDistance").click(function() {
 		return 0;
 	}
 
-	events.sort(compare, append())
+	events.sort(compare)
+	for (let i = 0; i < events.length; i++) {		
+ 		
+ 		let date = events[i].startTime.substring(0, 10)		
+ 		let time = events[i].startTime.substring(11, 16)		
+ 		
+ 		$('#results').append("<div class='col-md-4'><div class='box'>"+ events[i].name + "<br>" + events[i].venue.location.city + ", distance: " + events[i].distance + "m <br>" + date + ", " + time + "<br>" +"<a href=https://www.facebook.com/events/" + events[i].id + ">go to event</a></div></div>")          		
+ 	}
 })

@@ -9,30 +9,71 @@ html
 		link(href="/css/main.css" type="text/css" rel="stylesheet")
 		link(rel="stylesheet" href="/css/animate.css")
 		link(rel="stylesheet" href="/Morphext/dist/morphext.css")
+
 	
 
-	body
-		div(class="row")
-			div(id="leftNav" class="myLeftNav")
-				p(class="closebtn" onclick="closeNav()") x
+	body(class="sea")
+		div(class="row" id="spage")
+			div(class="col-md-12")
+
+				div(class="partbtn")
+					div(class="textsearchintro")
+						img(class="sv animated " id="sv7" width ="40%" src="/IMGS/testing7.svg" alt="")
+						img(class="sv animated " id="sv6" width ="40%" src="/IMGS/testing6.svg" alt="")
+						img(class="sv animated " id="sv21" width ="40%" src="/IMGS/testing8.svg" alt="")
+
+						p(class="partBtnnn") Let's get <span class="js-rotating" id="js"> Lazyy, started, fun, music </span> !
+						img(class="sv animated " id="sv9" width ="20%" src="/IMGS/testing9.svg" alt="")
+
+						p(class="partBtn2") Get the gigs you want, get the fun you diserve! <br>We just need your location to find them. 
+						img(class="sv animated " id="sv20" width ="30%" src="/IMGS/tesing.svg" alt="")
+						div(id="click")
+							a(href="#righto" id="link" class='smooth'  )
+								p(class="text-center" id="hah") ↓
+
+		
+		div(class="col-md-12" id="secondi")
+			div(id="right" class="center-block")
+				div(class="forming")
+					div(class="introform")
+						p(class="adress" id="righto") Enter your address here:
+
+					div(class="form-inline")
+					input#address(type="textbox"  class="form-control input-lg" value="Amsterdam, Netherlands")
+					input#submitMap(type="button" class="btn btn-default btn-lg center-block" value="find" method="get" action="/darezult")
+
+			input#sortDate(type="button" class="btn btn-primary btn-lg" value="Sort Dates")
+			input#sortDistance(type="button" class="btn btn-primary btn-lg" value="Sort Distance")
+
+			p#results 
 
 
-		div(class="row")
-			div(class="col-md-4")
-				div#floating-panel
-					input#address(type="textbox" value="Amsterdam, Netherlands")
-					input#submitMap(type="button" value="find" method="get" action="/darezult")
-			
-				input#sortDate(type="button" value="Sort Dates")
-				input#sortDistance(type="button" value="Sort Distance")
+		div(class="col-md-8" id="o")
+			div#map
+		div(class="col-md-12")
+			footer(class="footer-distributed")
+
+				div(class="footer-left")
+
+					h3 Get Lazyy					
+
+					p(class="footer-company-name") Get Lazyy &copy; 2015
+
+					div(class="footer-icons")
 
 			div(class="col-md-8")
 				div#map
 
-		div(class="grid")
-			p#results 
 
+				div(class="footer-right")
 
+					p Contact Us
+
+					form(action="#" method="post")
+
+						input(type="text" name="email" placeholder="Email")
+						textarea(name="message" placeholder="Message")
+						button Send
 
 
 script(type="text/javascript" src="/jquery-3.1.1.min.js")
