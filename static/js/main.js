@@ -29,7 +29,7 @@ $(document).ready(function() {
 		$('#map').show()
 		initMap()
 		$(window).scroll(function(){
-			console.log("someone scrolled")
+//			console.log("someone scrolled")
 		})
 // external js: isotope.pkgd.js, cells-by-row.js
 
@@ -108,7 +108,7 @@ var randomm = function() {
 		// animate elem from targets
 		// select each elem from my array target
 		$(targets).each(function(i, val) {
-			console.log(val)
+//			console.log(val)
 			if (Math.round(Math.random())) {
 				$(val).addClass('jello')
 			} else {
@@ -198,15 +198,17 @@ function geocodeAddress(geocoder, resultsMap) {
 
 				$('#results').empty()
 
-				console.log(data)
+				events = []
+
+//				console.log(data)
 
 				for (let i = 0; i < data.length; i++) {
 					let date = data[i].startTime.substring(0, 10)
 					let time = data[i].startTime.substring(11, 16)
 
 					events.push(data[i])
+					$('#results').append("<div class='col-md-3'> <div class='box'> <figure> <span> "+ data[i].name + "<figcaption>" + "<h3>" + data[i].venue.location.city + "<br>" + date + ", " + time + "<br>" +"<a href=https://www.facebook.com/events/" + data[i].id + "> go to event </a></div></div>") 
 				}
-				append()
 			})
 
 		} else {
@@ -242,20 +244,23 @@ $('#sortDate').click(function () {
 	}
 
 //	console.log(events)
-	events.sort(compare, append())
+	events.sort(compare)
+	setTimeout(append(), 3000)
 //	console.log(events)
 })
 
 $("#sortDistance").click(function() {
+
 	$('#results').empty()
 
 	function compare(a,b) {
-		if (a.distance < b.startTime)
+		if (a.distance < b.distance)
 			return 1;
-		if (a.distance > b.startTime)
+		if (a.distance > b.distance)
 			return -1;
 		return 0;
 	}
 
-	events.sort(compare, append())
+	events.sort(compare)
+	setTimeout(append(), 3000)
 })
