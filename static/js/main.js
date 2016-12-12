@@ -197,6 +197,7 @@ function geocodeAddress(geocoder, resultsMap) {
 			$.get("/searchevent", latlen, (data, stat) => {
 
 				$('#results').empty()
+
 				console.log(data)
 
 				for (let i = 0; i < data.length; i++) {
@@ -204,9 +205,8 @@ function geocodeAddress(geocoder, resultsMap) {
 					let time = data[i].startTime.substring(11, 16)
 
 					events.push(data[i])
-
-					$('#results').append("<div class='col-md-3'> <div class='box'> <figure> <span> "+ data[i].name + "<figcaption>" + "<h3>" + data[i].venue.location.city + "<br>" + date + ", " + time + "<br>" +"<a href=https://www.facebook.com/events/" + data[i].id + "> go to event </a></div></div>")          
 				}
+				append()
 			})
 
 		} else {
@@ -215,14 +215,23 @@ function geocodeAddress(geocoder, resultsMap) {
 	});
 }
 
+// function that appends events to the results id after sorting
+function append() {
+	$('#results').empty()
 
+	for (let i = 0; i < events.length; i++) {
+
+		let date = events[i].startTime.substring(0, 10)
+		let time = events[i].startTime.substring(11, 16)
+
+		$('#results').append("<div class='col-md-3'> <div class='box'> <figure> <span> "+ events[i].name + "<figcaption>" + "<h3>" + events[i].venue.location.city + "<br>" + date + ", " + time + "<br>" +"<a href=https://www.facebook.com/events/" + events[i].id + "> go to event </a></div></div>")          
+	}
+}
 
 // sorting results according to date
 $('#sortDate').click(function () {
 
 	$('#results').empty()
-
-	randCells.sort(randOrd)
 
 	function compare(a,b) {
 		if (a.startTime > b.startTime)
@@ -233,21 +242,12 @@ $('#sortDate').click(function () {
 	}
 
 //	console.log(events)
-	events.sort(compare)
+	events.sort(compare, append())
 //	console.log(events)
-
-for (let i = 0; i < events.length; i++) {		
- 	
- 		let date = events[i].startTime.substring(0, 10)		
- 		let time = events[i].startTime.substring(11, 16)		
- 		
-		$('#results').append("<div class='col-md-4'><div class='box'>"+ events[i].name + "<br>" + events[i].venue.location.city + ", distance: " + events[i].distance + "m <br>" + date + ", " + time + "<br>" +"<a href=https://www.facebook.com/events/" + events[i].id + ">go to event</a></div></div>")          			}
-	
 })
 
 $("#sortDistance").click(function() {
 	$('#results').empty()
-
 
 	function compare(a,b) {
 		if (a.distance < b.startTime)
@@ -257,12 +257,5 @@ $("#sortDistance").click(function() {
 		return 0;
 	}
 
-	events.sort(compare)
-	for (let i = 0; i < events.length; i++) {		
- 		
- 		let date = events[i].startTime.substring(0, 10)		
- 		let time = events[i].startTime.substring(11, 16)		
- 		
- 		$('#results').append("<div class='col-md-4'><div class='box'>"+ events[i].name + "<br>" + events[i].venue.location.city + ", distance: " + events[i].distance + "m <br>" + date + ", " + time + "<br>" +"<a href=https://www.facebook.com/events/" + events[i].id + ">go to event</a></div></div>")          		
- 	}
+	events.sort(compare, append())
 })
